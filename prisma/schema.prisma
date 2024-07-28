@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_LOCAL")
+}
+
+enum RoleType {
+  ADMIN
+  CADRE_CONTROLLING_AUTHORITY
+  EMPLOYEE
+  CM
+  CS
+  DOP
+}
+
+model User {
+  id                 String    @id @default(uuid())
+  username           String    @unique
+  password           String
+  email              String    @unique
+  mobileNumber       String    @unique
+  role               RoleType
+  employee           Employee?
+  controlledCadres   Cadre[]   @relation("CadreController")
+  otp                String?
+  otpExpiry          DateTime?
+  isVerified         Boolean   @default(false)
+  verificationStatus String    @default("Pending")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Employee {
+  id                             String    @id @default(uuid())
+  employeeId                     String?    @unique
+  user                           User?      @relation(fields: [userId], references: [id])
+  userId                         String?    @unique
+  empname                        String?
+  fatherName                     String?
+  profileImage                   String?
+  dateOfBirth                    DateTime?
+  gender                         String?
+  phoneNumber                    String    @unique
+  emailaddress                   String
+  maritalstatus                  String?
+  spouseName                     String?
+  totalChildren                  String?
+  state                          String?
+  district                       String?
+  constituency                   String?
+  gpu                            String?
+  ward                           String?
+  pin                            String?
+  policestation                  String?
+  postoffice                     String?
+  cadre                          Cadre?     @relation(fields: [cadreId], references: [id])
+  cadreId                        String?
+  cadreSequence                  Int?
+  department                     String
+  presentdesignation             String?
+  dateOfInitialAppointment       DateTime?
+  dateOfAppointmentGazettedGrade DateTime?
+  dateOfAppointmentPresentPost   DateTime?
+  TotalLengthOfSerive            String?
+  retirement                     DateTime?
+  dateOfLastPromotionSubstantive DateTime?
+  dateOfLastPromotionOfficiating DateTime?
+  natureOfEmployment             String?
+  createdAt                      DateTime  @default(now())
+  updatedAt                      DateTime  @updatedAt
+}
+
+model Cadre {
+  id                        String     @id @default(uuid())
+  name                      String
+  controllingAdminAuthority String // This will always be "Department of Personnel"
+  controllingDepartment     String? // This can be null for some cadres
+  controllingUser           User?      @relation("CadreController", fields: [controllingUserId], references: [id])
+  controllingUserId         String?
+  employees                 Employee[]
+  lastSequenceNumber        Int        @default(0)
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+}
