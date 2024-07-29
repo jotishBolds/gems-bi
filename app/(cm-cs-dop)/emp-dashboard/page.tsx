@@ -28,8 +28,7 @@ import RoleSideBarLayout from "@/components/page-layout/sidebar/all-role-sidebar
 
 interface Employee {
   id: string;
-  firstName: string;
-  lastName: string;
+  empname: string;
   email: string;
   department: string;
   presentdesignation: string;
@@ -101,19 +100,16 @@ const EmployeeList: React.FC = () => {
 
   const handleSearch = useCallback(
     (filters: {
-      firstName: string;
-      lastName: string;
+      empname: string;
       department: string;
       cadre: string;
       designation: string;
     }) => {
       const results = employees.filter((employee) => {
-        const firstNameMatch = (employee.firstName || "")
+        const empnameMatch = (employee.empname || "")
           .toLowerCase()
-          .includes((filters.firstName || "").toLowerCase());
-        const lastNameMatch = (employee.lastName || "")
-          .toLowerCase()
-          .includes((filters.lastName || "").toLowerCase());
+          .includes((filters.empname || "").toLowerCase());
+
         const designationMatch = (employee.presentdesignation || "")
           .toLowerCase()
           .includes((filters.designation || "").toLowerCase());
@@ -126,11 +122,7 @@ const EmployeeList: React.FC = () => {
             (filters.cadre || "").toLowerCase();
 
         return (
-          firstNameMatch &&
-          lastNameMatch &&
-          designationMatch &&
-          departmentMatch &&
-          cadreMatch
+          empnameMatch && designationMatch && departmentMatch && cadreMatch
         );
       });
 
@@ -181,15 +173,14 @@ const EmployeeList: React.FC = () => {
                             <Avatar>
                               <AvatarImage
                                 src={employee.profileImage || ""}
-                                alt={`${employee.firstName} ${employee.lastName}`}
+                                alt={`${employee.empname} `}
                               />
                               <AvatarFallback>
-                                {employee.firstName[0]}
-                                {employee.lastName[0]}
+                                {employee.empname[0]}
                               </AvatarFallback>
                             </Avatar>
                           </TableCell>
-                          <TableCell className="font-medium">{`${employee.firstName} ${employee.lastName}`}</TableCell>
+                          <TableCell className="font-medium">{`${employee.empname} `}</TableCell>
                           <TableCell>{employee.email}</TableCell>
                           <TableCell>{employee.department}</TableCell>
                           <TableCell>{employee.presentdesignation}</TableCell>

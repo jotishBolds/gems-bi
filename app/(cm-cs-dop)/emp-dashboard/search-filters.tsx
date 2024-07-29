@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,7 @@ import {
 } from "@/components/ui/accordion";
 
 interface SearchFilters {
-  firstName: string;
-  lastName: string;
+  empname: string;
   department: string;
   cadre: string;
   designation: string;
@@ -31,8 +31,7 @@ interface SearchFilterProps {
 
 const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
   const [filters, setFilters] = useState<SearchFilters>({
-    firstName: "",
-    lastName: "",
+    empname: "",
     department: "",
     cadre: "all",
     designation: "",
@@ -75,8 +74,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
 
   const clearFilters = () => {
     const clearedFilters = {
-      firstName: "",
-      lastName: "",
+      empname: "",
       department: "",
       cadre: "all",
       designation: "",
@@ -112,34 +110,17 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
             <div className="space-y-4">
               <div>
                 <Label
-                  htmlFor="firstName-mobile"
+                  htmlFor="empname-mobile"
                   className="text-sm font-medium text-gray-700"
                 >
-                  First Name
+                  Full Name
                 </Label>
                 <Input
                   type="text"
-                  id="firstName-mobile"
-                  name="firstName"
-                  placeholder="Search by first name"
-                  value={filters.firstName}
-                  onChange={handleInputChange}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label
-                  htmlFor="lastName-mobile"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Last Name
-                </Label>
-                <Input
-                  type="text"
-                  id="lastName-mobile"
-                  name="lastName"
-                  placeholder="Search by last name"
-                  value={filters.lastName}
+                  id="empname-mobile"
+                  name="empname"
+                  placeholder="Search by name"
+                  value={filters.empname}
                   onChange={handleInputChange}
                   className="mt-1"
                 />
@@ -225,34 +206,17 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
       <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
         <div className="flex-1">
           <Label
-            htmlFor="firstName"
+            htmlFor="empname"
             className="text-sm font-medium text-gray-700"
           >
-            First Name
+            Full Name
           </Label>
           <Input
             type="text"
-            id="firstName"
-            name="firstName"
-            placeholder="Search by first name"
-            value={filters.firstName}
-            onChange={handleInputChange}
-            className="mt-1"
-          />
-        </div>
-        <div className="flex-1">
-          <Label
-            htmlFor="lastName"
-            className="text-sm font-medium text-gray-700"
-          >
-            Last Name
-          </Label>
-          <Input
-            type="text"
-            id="lastName"
-            name="lastName"
-            placeholder="Search by last name"
-            value={filters.lastName}
+            id="empname"
+            name="empname"
+            placeholder="Search by name"
+            value={filters.empname}
             onChange={handleInputChange}
             className="mt-1"
           />

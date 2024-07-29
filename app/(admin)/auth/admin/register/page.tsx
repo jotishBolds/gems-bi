@@ -432,7 +432,7 @@ const AdminRegister = () => {
                     <option value={RoleType.CADRE_CONTROLLING_AUTHORITY}>
                       Cadre Controlling Authority
                     </option>
-                    <option value={RoleType.EMPLOYEE}>Employee</option>
+                    {/* <option value={RoleType.EMPLOYEE}>Employee</option> */}
                     <option value={RoleType.CM}>CM</option>
                     <option value={RoleType.CS}>CS</option>
                     <option value={RoleType.DOP}>DOP</option>

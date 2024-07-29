@@ -18,8 +18,7 @@ import {
 
 interface Employee {
   id: string;
-  firstName: string;
-  lastName: string;
+  empname: string;
   email: string;
   department: string;
   presentdesignation: string;
@@ -70,16 +69,15 @@ const EmployeeDetails: React.FC<{ employee: Employee }> = ({ employee }) => {
                 <Avatar className="w-16 h-16 sm:w-24 sm:h-24">
                   <AvatarImage
                     src={employee.profileImage || ""}
-                    alt={`${employee.firstName} ${employee.lastName}`}
+                    alt={`${employee.empname}`}
                   />
                   <AvatarFallback className="text-xl sm:text-2xl">
-                    {employee.firstName[0]}
-                    {employee.lastName[0]}
+                    {employee.empname[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
                   <h2 className="text-lg sm:text-2xl font-bold leading-tight">
-                    {`${employee.firstName} ${employee.lastName}`},{" "}
+                    {`${employee.empname} `},{" "}
                     {employee.cadreName && <>{employee.cadreName}</>}
                   </h2>
 
