@@ -18,6 +18,7 @@ import { useBiToast } from "@/components/page-layout/toast/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { BarLoader } from "react-spinners";
 import Canvas from "../../signin/canva";
+import EmployeeRegisterNotice from "./note";
 
 // Zod schema
 const employeeSchema = z
@@ -184,21 +185,22 @@ const EmployeeRegister: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[80vh] md:h-[80vh] py-2">
+    <div className="flex flex-col items-center justify-center min-h-[90vh] py-4 px-4 md:py-8">
       <canvas ref={canvasRef} className="absolute inset-0" />
       <Canvas canvasRef={canvasRef} />
-      <div className="w-full max-w-4xl p-8 z-10">
-        <div className="flex flex-col items-center justify-center gap-2 mb-6">
-          <h1 className="text-3xl font-bold text-center">
+      <div className="w-full max-w-4xl bg-white bg-opacity-90 p-4 md:p-8 rounded-lg shadow-lg z-10">
+        <div className="flex flex-col items-center justify-center gap-2 mb-4 md:mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-center">
             Employee Registration
           </h1>
-          <p className="text-center">
+          <p className="text-sm md:text-base text-center">
             Government Employee Management System (GEMS)
           </p>
         </div>
+        <EmployeeRegisterNotice />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {!showOtpInput ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <Label
                   htmlFor="empname"
