@@ -7,39 +7,41 @@ import { authOptions } from "../../auth/[...nextauth]/auth-options";
 
 const employeeSchema = z.object({
   empname: z.string().nonempty("Employee name is required"),
-  dateOfBirth: z.string().optional().nullable(),
+  dateOfBirth: z.string().nullable(),
   cadre: z.string().nonempty("Cadre name is required"),
   department: z.string().nonempty("Department is required"),
-  emailaddress: z.string().email().optional(),
-  presentdesignation: z.string().optional(),
-  fatherName: z.string().optional(),
-  phoneNumber: z.string().optional(),
-  gender: z.string().optional(),
-  maritalstatus: z.string().optional(),
-  spouseName: z.string().optional(),
-  totalChildren: z.string().optional(),
-  state: z.string().optional(),
-  district: z.string().optional(),
-  constituency: z.string().optional(),
-  gpu: z.string().optional(),
-  ward: z.string().optional(),
-  pin: z.string().optional(),
-  policestation: z.string().optional(),
-  postoffice: z.string().optional(),
-  dateOfInitialAppointment: z.string().optional(),
-  dateOfAppointmentGazettedGrade: z.string().optional(),
-  dateOfAppointmentPresentPost: z.string().optional(),
-  TotalLengthOfSerive: z.string().optional(),
-  retirement: z.string().optional(),
-  dateOfLastPromotionSubstantive: z.string().optional(),
-  dateOfLastPromotionOfficiating: z.string().optional(),
-  natureOfEmployment: z.string().optional(),
+  emailaddress: z.string().email().optional().nullable(),
+  presentdesignation: z.string().optional().nullable(),
+  fatherName: z.string().optional().nullable(),
+  phoneNumber: z.string().optional().nullable(),
+  gender: z.string().optional().nullable(),
+  maritalstatus: z.string().optional().nullable(),
+  spouseName: z.string().optional().nullable(),
+  totalChildren: z.string().optional().nullable(),
+  state: z.string().optional().nullable(),
+  district: z.string().optional().nullable(),
+  constituency: z.string().optional().nullable(),
+  gpu: z.string().optional().nullable(),
+  ward: z.string().optional().nullable(),
+  pin: z.string().optional().nullable(),
+  policestation: z.string().optional().nullable(),
+  postoffice: z.string().optional().nullable(),
+  dateOfInitialAppointment: z.string().optional().nullable(),
+  dateOfAppointmentGazettedGrade: z.string().optional().nullable(),
+  dateOfAppointmentPresentPost: z.string().optional().nullable(),
+  TotalLengthOfSerive: z.string().optional().nullable(),
+  retirement: z.string().optional().nullable(),
+  dateOfLastPromotionSubstantive: z.string().optional().nullable(),
+  dateOfLastPromotionOfficiating: z.string().optional().nullable(),
+  natureOfEmployment: z.string().optional().nullable(),
 });
 
 type EmployeeInput = z.infer<typeof employeeSchema>;
 
 function parseDate(dateString: string | null | undefined): Date | null {
-  console.log(`Parsing date: ${dateString}, Type: ${typeof dateString}`);
+  if (!dateString) {
+    return null;
+  }
 
   if (!dateString) {
     console.log("Date string is null or undefined");
@@ -140,7 +142,7 @@ export async function POST(req: NextRequest) {
         const stringRow: Partial<EmployeeInput> = Object.fromEntries(
           Object.entries(row as Record<string, unknown>).map(([key, value]) => [
             key,
-            value === null ? null : String(value).trim(),
+            value === null || value === "" ? null : String(value).trim(),
           ])
         );
 
@@ -178,26 +180,28 @@ export async function POST(req: NextRequest) {
         // Prepare the data for Prisma, handling required fields and date parsing
         const employeeData = {
           empname: validatedData.empname,
-          dateOfBirth: parsedDOB,
+          dateOfBirth: parseDate(validatedData.dateOfBirth),
           department: validatedData.department,
-          cadreId: cadre.id,
+          cadreId: (
+            await findCadre(validatedData.cadre, validatedData.department)
+          )?.id,
           emailaddress:
             validatedData.emailaddress || `employee${index + 2}@example.com`,
-          presentdesignation: validatedData.presentdesignation || null,
-          fatherName: validatedData.fatherName || null,
+          presentdesignation: validatedData.presentdesignation,
+          fatherName: validatedData.fatherName,
           phoneNumber: validatedData.phoneNumber || `employee${index + 2}`,
-          gender: validatedData.gender || null,
-          maritalstatus: validatedData.maritalstatus || null,
-          spouseName: validatedData.spouseName || null,
-          totalChildren: validatedData.totalChildren || null,
-          state: validatedData.state || null,
-          district: validatedData.district || null,
-          constituency: validatedData.constituency || null,
-          gpu: validatedData.gpu || null,
-          ward: validatedData.ward || null,
-          pin: validatedData.pin || null,
-          policestation: validatedData.policestation || null,
-          postoffice: validatedData.postoffice || null,
+          gender: validatedData.gender,
+          maritalstatus: validatedData.maritalstatus,
+          spouseName: validatedData.spouseName,
+          totalChildren: validatedData.totalChildren,
+          state: validatedData.state,
+          district: validatedData.district,
+          constituency: validatedData.constituency,
+          gpu: validatedData.gpu,
+          ward: validatedData.ward,
+          pin: validatedData.pin,
+          policestation: validatedData.policestation,
+          postoffice: validatedData.postoffice,
           dateOfInitialAppointment: parseDate(
             validatedData.dateOfInitialAppointment
           ),
@@ -207,7 +211,7 @@ export async function POST(req: NextRequest) {
           dateOfAppointmentPresentPost: parseDate(
             validatedData.dateOfAppointmentPresentPost
           ),
-          TotalLengthOfSerive: validatedData.TotalLengthOfSerive || null,
+          TotalLengthOfSerive: validatedData.TotalLengthOfSerive,
           retirement: parseDate(validatedData.retirement),
           dateOfLastPromotionSubstantive: parseDate(
             validatedData.dateOfLastPromotionSubstantive
@@ -215,7 +219,7 @@ export async function POST(req: NextRequest) {
           dateOfLastPromotionOfficiating: parseDate(
             validatedData.dateOfLastPromotionOfficiating
           ),
-          natureOfEmployment: validatedData.natureOfEmployment || null,
+          natureOfEmployment: validatedData.natureOfEmployment,
         };
 
         console.log(

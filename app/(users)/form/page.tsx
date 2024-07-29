@@ -58,6 +58,13 @@ const EmployeeForm: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
 
+  const calculateRetirementDate = (dateOfBirth: string) => {
+    const dob = new Date(dateOfBirth);
+    const retirementDate = new Date(dob);
+    retirementDate.setFullYear(dob.getFullYear() + 60);
+    return retirementDate.toISOString().split("T")[0];
+  };
+
   useEffect(() => {
     const fetchCadresAndEmployeeData = async () => {
       try {
@@ -71,39 +78,43 @@ const EmployeeForm: React.FC = () => {
         const cadresData = await cadresResponse.json();
         setCadres(cadresData);
 
-        if (employeeResponse) {
-          if (employeeResponse.ok) {
-            const employeeData: EmployeeFormData & { profileImage?: string } =
-              await employeeResponse.json();
-            if (employeeData) {
-              const dateFields = [
-                "dateOfBirth",
-                "dateOfInitialAppointment",
-                "dateOfAppointmentGazettedGrade",
-                "dateOfAppointmentPresentPost",
-                "retirement",
-                "dateOfLastPromotionSubstantive",
-                "dateOfLastPromotionOfficiating",
-              ];
-              dateFields.forEach((field) => {
-                if (employeeData[field as keyof EmployeeFormData]) {
-                  employeeData[field as keyof EmployeeFormData] = new Date(
-                    employeeData[field as keyof EmployeeFormData]
-                  )
-                    .toISOString()
-                    .split("T")[0];
-                }
-              });
-
-              reset(employeeData);
-              setIsUpdate(true);
-              if (employeeData.profileImage) {
-                setImagePreview(employeeData.profileImage);
+        if (employeeResponse && employeeResponse.ok) {
+          const employeeData: EmployeeFormData & { profileImage?: string } =
+            await employeeResponse.json();
+          if (employeeData) {
+            const dateFields = [
+              "dateOfBirth",
+              "dateOfInitialAppointment",
+              "dateOfAppointmentGazettedGrade",
+              "dateOfAppointmentPresentPost",
+              "dateOfLastPromotionSubstantive",
+              "dateOfLastPromotionOfficiating",
+            ];
+            dateFields.forEach((field) => {
+              if (employeeData[field as keyof EmployeeFormData]) {
+                employeeData[field as keyof EmployeeFormData] = new Date(
+                  employeeData[field as keyof EmployeeFormData]
+                )
+                  .toISOString()
+                  .split("T")[0];
               }
+            });
+
+            // Calculate retirement date based on date of birth
+            if (employeeData.dateOfBirth) {
+              employeeData.retirement = calculateRetirementDate(
+                employeeData.dateOfBirth
+              );
             }
-          } else if (employeeResponse.status !== 404) {
-            throw new Error("Failed to fetch employee data");
+
+            reset(employeeData);
+            setIsUpdate(true);
+            if (employeeData.profileImage) {
+              setImagePreview(employeeData.profileImage);
+            }
           }
+        } else if (employeeResponse && employeeResponse.status !== 404) {
+          throw new Error("Failed to fetch employee data");
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -114,7 +125,6 @@ const EmployeeForm: React.FC = () => {
 
     fetchCadresAndEmployeeData();
   }, [session, reset]);
-
   const selectedCadreId = watch("cadreId");
 
   useEffect(() => {
@@ -127,12 +137,6 @@ const EmployeeForm: React.FC = () => {
       }
     }
   }, [selectedCadreId, cadres, setValue]);
-  const calculateRetirementDate = (dateOfBirth: string) => {
-    const dob = new Date(dateOfBirth);
-    const retirementDate = new Date(dob);
-    retirementDate.setFullYear(dob.getFullYear() + 60);
-    return retirementDate.toISOString().split("T")[0];
-  };
 
   useEffect(() => {
     const dateOfBirth = watch("dateOfBirth");
@@ -140,7 +144,7 @@ const EmployeeForm: React.FC = () => {
       const retirementDate = calculateRetirementDate(dateOfBirth);
       setValue("retirement", retirementDate);
     }
-  }, [watch("dateOfBirth")]);
+  }, [watch("dateOfBirth"), setValue]);
   const onSubmit = async (data: EmployeeFormData) => {
     if (!session?.user.id) {
       console.error("User ID not available");
@@ -342,7 +346,10 @@ const EmployeeForm: React.FC = () => {
                 </label>
                 <input
                   {...register("empname")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                  readOnly={isUpdate}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
+                    isUpdate ? "bg-gray-100" : ""
+                  }`}
                 />
               </div>
               <div>
@@ -361,7 +368,10 @@ const EmployeeForm: React.FC = () => {
                 <input
                   {...register("dateOfBirth")}
                   type="date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                  readOnly={isUpdate}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
+                    isUpdate ? "bg-gray-100" : ""
+                  }`}
                 />
               </div>
               <div>
@@ -565,7 +575,10 @@ const EmployeeForm: React.FC = () => {
                 </label>
                 <select
                   {...register("cadreId")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
+                  disabled={isUpdate}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white ${
+                    isUpdate ? "bg-gray-100" : ""
+                  }`}
                 >
                   <option value="">Select Cadre</option>
                   {cadres.map((cadre) => (

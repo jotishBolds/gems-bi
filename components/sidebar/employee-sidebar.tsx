@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.aside
-          className="bg-white w-64 lg:w-80 fixed left-0 top-[90px] bottom-0 overflow-y-auto z-50 flex flex-col"
+          className="bg-white w-64 lg:w-80 fixed left-0 top-[57px] bottom-0 overflow-y-auto z-50 flex flex-col"
           initial="closed"
           animate="open"
           exit="closed"
@@ -62,9 +62,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 isActive("/employee-dashboard") ? "bg-gray-50" : ""
               }`}
             >
-              <Home className="mr-2" size={20} /> Home
+              <Home className="mr-2" size={20} /> Dashboard
             </Link>
-            <div className="relative">
+            {/* <div className="relative">
               <button
                 className={`flex items-center w-full text-left p-4 text-gray-700 hover:bg-gray-100 ${
                   isActive("/analytics") || isActive("/historical")
@@ -109,15 +109,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
-            <Link
+            </div> */}
+            {/* <Link
               href="/documents"
               className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
                 isActive("/documents") ? "bg-gray-50" : ""
               }`}
             >
               <FileText className="mr-2" size={20} /> Documents
-            </Link>
+            </Link> */}
           </nav>
           <span className="flex items-center p-4 text-gray-700 hover:bg-gray-10">
             <p className="text-sm">Role : {session.user.role}</p>

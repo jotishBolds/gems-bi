@@ -297,7 +297,7 @@ const EmployeeProfile: React.FC = () => {
                       <div className="flex items-center">
                         <Briefcase className="w-4 h-4 mr-2 text-gray-500" />
                         <span className="text-sm">
-                          Joined:{" "}
+                          D.O.I.A:{" "}
                           {formatDate(employee.dateOfInitialAppointment)}
                         </span>
                       </div>

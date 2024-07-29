@@ -63,15 +63,23 @@ const AdminSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                 isActive("/auth/admin/register") ? "bg-gray-50" : ""
               }`}
             >
-              <KeySquare className="mr-2" size={20} /> Create User
+              <KeySquare className="mr-2" size={20} /> Register User
             </Link>
             <Link
               href="/cadre-form"
               className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
-                isActive("/auth/admin/register") ? "bg-gray-50" : ""
+                isActive("/cadre-form") ? "bg-gray-50" : ""
               }`}
             >
-              <FormInput className="mr-2" size={20} /> Add Cadre
+              <FormInput className="mr-2" size={20} /> Add New Cadre
+            </Link>
+            <Link
+              href="/import-csv"
+              className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
+                isActive("/import-csv") ? "bg-gray-50" : ""
+              }`}
+            >
+              <FormInput className="mr-2" size={20} /> Import Employee
             </Link>
           </nav>
           <span className="flex items-center p-4 text-gray-700 hover:bg-gray-10">
