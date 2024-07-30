@@ -158,13 +158,13 @@ const NavBar: React.FC = () => {
               <User className="mr-2 h-4 w-4" />
               <span>Admin Dashboard</span>
             </DropdownMenuItem>
-            {/* <DropdownMenuItem
+            <DropdownMenuItem
               className={menuItemClass}
-              onClick={() => router.push("/manage-employees")}
+              onClick={() => router.push("/profile")}
             >
               <User className="mr-2 h-4 w-4" />
-              <span>Manage Employees</span>
-            </DropdownMenuItem> */}
+              <span>Your Profile</span>
+            </DropdownMenuItem>
             {/* <DropdownMenuItem
               className={menuItemClass}
               onClick={() => router.push("/system-settings")}
@@ -195,7 +195,7 @@ const NavBar: React.FC = () => {
             </DropdownMenuItem>
             <DropdownMenuItem
               className={menuItemClass}
-              onClick={() => router.push("/my-profile")}
+              onClick={() => router.push("/profile")}
             >
               <User className="mr-2 h-4 w-4" />
               <span>My Profile</span>
