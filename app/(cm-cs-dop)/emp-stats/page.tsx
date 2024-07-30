@@ -13,15 +13,28 @@ import {
   Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScaleLoader } from "react-spinners";
-import { Users, CalendarClock, Building } from "lucide-react";
+import {
+  Users,
+  CalendarClock,
+  Building,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import RoleSideBarLayout from "@/components/page-layout/sidebar/all-role-sidebar-layout";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface Employee {
   id: string;
   empname: string;
   department: string;
   retirement: string | null;
+  natureOfEmployment: string;
 }
 
 const COLORS = [
@@ -37,6 +50,10 @@ const EmployeeStatistics: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [employeeFilter, setEmployeeFilter] = useState<
+    "all" | "regular" | "temporary"
+  >("all");
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -80,8 +97,25 @@ const EmployeeStatistics: React.FC = () => {
   }
 
   const totalEmployees = employees.length;
+  const regularEmployees = employees.filter(
+    (employee) =>
+      employee.natureOfEmployment === "Temporary-Permanent (Regular)"
+  );
+  const temporaryEmployees = employees.filter(
+    (employee) =>
+      employee.natureOfEmployment !== "Temporary-Permanent (Regular)"
+  );
 
-  const departmentCounts = employees.reduce((acc, employee) => {
+  const filteredEmployees = employees.filter((employee) => {
+    if (employeeFilter === "all") return true;
+    if (employeeFilter === "regular")
+      return employee.natureOfEmployment === "Temporary-Permanent (Regular)";
+    if (employeeFilter === "temporary")
+      return employee.natureOfEmployment !== "Temporary-Permanent (Regular)";
+    return true;
+  });
+
+  const departmentCounts = filteredEmployees.reduce((acc, employee) => {
     acc[employee.department] = (acc[employee.department] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -97,7 +131,7 @@ const EmployeeStatistics: React.FC = () => {
     currentDate.getDate()
   );
 
-  const retiringEmployees = employees.filter((employee) => {
+  const retiringEmployees = filteredEmployees.filter((employee) => {
     if (!employee.retirement) return false;
     const retirementDate = new Date(employee.retirement);
     return !isNaN(retirementDate.getTime()) && retirementDate <= oneYearFromNow;
@@ -107,8 +141,16 @@ const EmployeeStatistics: React.FC = () => {
 
   const retirementData = [
     { name: "Retiring within a year", value: retiringWithinYear },
-    { name: "Not retiring soon", value: totalEmployees - retiringWithinYear },
+    {
+      name: "Not retiring soon",
+      value: filteredEmployees.length - retiringWithinYear,
+    },
   ];
+
+  const handleFilterClick = (filter: "all" | "regular" | "temporary") => {
+    setEmployeeFilter(filter);
+    setIsOpen(true);
+  };
 
   return (
     <RoleSideBarLayout>
@@ -127,9 +169,37 @@ const EmployeeStatistics: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold text-blue-600">
-                {totalEmployees.toLocaleString()}
+                {filteredEmployees.length.toLocaleString()}
               </div>
               <p className="text-xs text-blue-600 mt-1">Active workforce</p>
+              <div className="flex flex-wrap justify-between mt-4 gap-2">
+                <Button
+                  variant={employeeFilter === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleFilterClick("all")}
+                  className="flex-grow"
+                >
+                  All ({totalEmployees})
+                </Button>
+                <Button
+                  variant={employeeFilter === "regular" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleFilterClick("regular")}
+                  className="flex-grow"
+                >
+                  Regular ({regularEmployees.length})
+                </Button>
+                <Button
+                  variant={
+                    employeeFilter === "temporary" ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => handleFilterClick("temporary")}
+                  className="flex-grow"
+                >
+                  Temporary ({temporaryEmployees.length})
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -163,6 +233,83 @@ const EmployeeStatistics: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-8">
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full flex items-center justify-center"
+            >
+              {isOpen ? (
+                <>
+                  Hide Employee List <ChevronUp className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  Show Employee List <ChevronDown className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">
+                  {employeeFilter === "all"
+                    ? "All Employees"
+                    : employeeFilter === "regular"
+                    ? "Regular Employees"
+                    : "Temporary Employees"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Department
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Nature of Employment
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Retirement Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {filteredEmployees.map((employee) => (
+                        <tr key={employee.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {employee.empname}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.department}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.natureOfEmployment}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.retirement
+                              ? new Date(
+                                  employee.retirement
+                                ).toLocaleDateString()
+                              : "N/A"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </CollapsibleContent>
+        </Collapsible>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           <Card>
@@ -218,56 +365,6 @@ const EmployeeStatistics: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">
-              Employees Retiring Within a Year
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {retiringWithinYear > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Department
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Retirement Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {retiringEmployees.map((employee) => (
-                      <tr key={employee.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {employee.empname}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {employee.department}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {employee.retirement
-                            ? new Date(employee.retirement).toLocaleDateString()
-                            : "N/A"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-gray-600">
-                No employees are retiring within the next year.
-              </p>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </RoleSideBarLayout>
   );
