@@ -177,7 +177,7 @@ const EmployeeStatistics: React.FC = () => {
                   variant={employeeFilter === "all" ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleFilterClick("all")}
-                  className="flex-grow"
+                  className="flex-grow "
                 >
                   All ({totalEmployees})
                 </Button>
