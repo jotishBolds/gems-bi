@@ -1,9 +1,10 @@
 "use client";
-import Sidebar from "@/components/sidebar/employee-sidebar";
+
 import React, { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Sidebar from "@/components/sidebar/employee-sidebar";
 
 type LayoutProps = {
   children: ReactNode;

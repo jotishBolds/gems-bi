@@ -87,9 +87,9 @@ const AdminSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           </span>
           <div className="border-t">
             <Link
-              href="/support"
+              href="/support-admin"
               className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
-                isActive("/support") ? "bg-gray-50" : ""
+                isActive("/support-admin") ? "bg-gray-50" : ""
               }`}
             >
               <HelpCircle className="mr-2" size={20} /> Support
