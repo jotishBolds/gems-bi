@@ -59,6 +59,7 @@ interface EmployeeData {
   } | null;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   dateOfInitialAppointment: string;
   dateOfAppointmentGazettedGrade: string;
   dateOfAppointmentPresentPost: string;
@@ -407,6 +408,10 @@ const EmployeeProfile: React.FC = () => {
                     <ProfileField
                       label="Present Designation"
                       value={employee.presentdesignation}
+                    />
+                    <ProfileField
+                      label="Department of Posting"
+                      value={employee.departmentOfPosting}
                     />
                     <ProfileField
                       label="Nature of Employment"

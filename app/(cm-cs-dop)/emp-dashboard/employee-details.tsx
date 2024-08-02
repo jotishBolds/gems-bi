@@ -22,6 +22,7 @@ interface Employee {
   email: string;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   profileImage: string | null;
   fatherName: string;
   dateOfBirth: string;
@@ -170,6 +171,10 @@ const EmployeeDetails: React.FC<{ employee: Employee }> = ({ employee }) => {
                   <InfoItem
                     label="Nature of Employment"
                     value={employee.natureOfEmployment}
+                  />
+                  <InfoItem
+                    label="Department Of Posting"
+                    value={employee.departmentOfPosting || "N/A"}
                   />
                 </div>
               </CardContent>

@@ -32,6 +32,7 @@ interface Employee {
   email: string;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   profileImage: string | null;
   fatherName: string;
   dateOfBirth: string;

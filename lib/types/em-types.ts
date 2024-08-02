@@ -45,6 +45,7 @@ export interface Employee {
   cadreSequence?: number | null;
   department: string;
   presentdesignation?: string | null;
+  departmentOfPosting?: string | null;
   dateOfInitialAppointment?: Date | null;
   dateOfAppointmentGazettedGrade?: Date | null;
   dateOfAppointmentPresentPost?: Date | null;

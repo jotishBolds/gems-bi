@@ -72,6 +72,7 @@ const AdminDashboard: React.FC = () => {
     [key: string]: string;
   }>({});
   const [formData, setFormData] = useState<CombinedUserData | null>(null);
+  const [departments, setDepartments] = useState<string[]>([]);
 
   useEffect(() => {
     if (editingUserId && expandedUsers[editingUserId]) {
@@ -175,7 +176,19 @@ const AdminDashboard: React.FC = () => {
       console.error("Error fetching cadres:", error);
     }
   }, []);
-
+  const fetchDepartments = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cadre/department");
+      if (res.ok) {
+        const data = await res.json();
+        setDepartments(data);
+      } else {
+        console.error("Failed to fetch departments");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  }, []);
   const handleVerifyUser = async (userId: string, status: boolean) => {
     try {
       const newStatus = status ? "Verified" : "Pending";
@@ -221,6 +234,7 @@ const AdminDashboard: React.FC = () => {
     if (status === "authenticated" && session?.user.role === "ADMIN") {
       fetchUsers();
       fetchCadres();
+      fetchDepartments();
     } else if (status !== "loading") {
       router.push("/auth/admin/login");
     }
@@ -896,6 +910,11 @@ const AdminDashboard: React.FC = () => {
                                           ?.presentdesignation
                                       )}
                                       {renderDetailItem(
+                                        "Department of Posting",
+                                        expandedUsers[user.id]
+                                          ?.departmentOfPosting
+                                      )}
+                                      {renderDetailItem(
                                         "Nature of Employment",
                                         expandedUsers[user.id]
                                           ?.natureOfEmployment
@@ -1131,6 +1150,12 @@ const AdminDashboard: React.FC = () => {
                                             "presentdesignation",
                                             "Present Designation",
                                             "text"
+                                          )}
+                                          {renderFormField(
+                                            "departmentOfPosting",
+                                            "Department of Posting",
+                                            "select",
+                                            departments
                                           )}
                                           {renderFormField(
                                             "natureOfEmployment",

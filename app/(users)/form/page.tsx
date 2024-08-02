@@ -34,6 +34,7 @@ interface EmployeeFormData {
   cadreId: string;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   dateOfInitialAppointment: string;
   dateOfAppointmentGazettedGrade: string;
   dateOfAppointmentPresentPost: string;
@@ -57,7 +58,7 @@ const EmployeeForm: React.FC = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
-
+  const [departments, setDepartments] = useState<string[]>([]);
   const calculateRetirementDate = (dateOfBirth: string) => {
     const dob = new Date(dateOfBirth);
     const retirementDate = new Date(dob);
@@ -68,45 +69,26 @@ const EmployeeForm: React.FC = () => {
   useEffect(() => {
     const fetchCadresAndEmployeeData = async () => {
       try {
-        const [cadresResponse, employeeResponse] = await Promise.all([
-          fetch("/api/cadre"),
-          session?.user.id
-            ? fetch(`/api/employee/${session.user.id}`)
-            : Promise.resolve(null),
-        ]);
+        const [cadresResponse, employeeResponse, departmentsResponse] =
+          await Promise.all([
+            fetch("/api/cadre"),
+            session?.user.id
+              ? fetch(`/api/employee/${session.user.id}`)
+              : Promise.resolve(null),
+            fetch("/api/cadre/department"),
+          ]);
 
         const cadresData = await cadresResponse.json();
         setCadres(cadresData);
+
+        const departmentsData = await departmentsResponse.json();
+        setDepartments(departmentsData);
 
         if (employeeResponse && employeeResponse.ok) {
           const employeeData: EmployeeFormData & { profileImage?: string } =
             await employeeResponse.json();
           if (employeeData) {
-            const dateFields = [
-              "dateOfBirth",
-              "dateOfInitialAppointment",
-              "dateOfAppointmentGazettedGrade",
-              "dateOfAppointmentPresentPost",
-              "dateOfLastPromotionSubstantive",
-              "dateOfLastPromotionOfficiating",
-            ];
-            dateFields.forEach((field) => {
-              if (employeeData[field as keyof EmployeeFormData]) {
-                employeeData[field as keyof EmployeeFormData] = new Date(
-                  employeeData[field as keyof EmployeeFormData]
-                )
-                  .toISOString()
-                  .split("T")[0];
-              }
-            });
-
-            // Calculate retirement date based on date of birth
-            if (employeeData.dateOfBirth) {
-              employeeData.retirement = calculateRetirementDate(
-                employeeData.dateOfBirth
-              );
-            }
-
+            // ... (keep existing code for date fields)
             reset(employeeData);
             setIsUpdate(true);
             if (employeeData.profileImage) {
@@ -174,6 +156,7 @@ const EmployeeForm: React.FC = () => {
       "postoffice",
       "department",
       "presentdesignation",
+      "departmentOfPosting",
       "dateOfInitialAppointment",
       "dateOfAppointmentGazettedGrade",
       "dateOfAppointmentPresentPost",
@@ -606,6 +589,22 @@ const EmployeeForm: React.FC = () => {
                   {...register("presentdesignation")}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Department of Posting
+                </label>
+                <select
+                  {...register("departmentOfPosting")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 bg-white"
+                >
+                  <option value="">Select Department of Posting</option>
+                  {departments.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

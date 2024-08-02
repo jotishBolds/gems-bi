@@ -65,6 +65,7 @@ interface Employee {
   email: string;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   profileImage: string | null;
   fatherName: string;
   dateOfBirth: string;
@@ -664,6 +665,10 @@ function EmployeeDetails({ employee }: { employee: Employee }) {
                   <InfoItem
                     label="Nature of Employment"
                     value={employee.natureOfEmployment}
+                  />
+                  <InfoItem
+                    label="Department Of Posting"
+                    value={employee.departmentOfPosting || "N/A"}
                   />
                 </div>
               </CardContent>

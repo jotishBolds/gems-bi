@@ -10,6 +10,8 @@ interface EmployeeData {
   cadreId: string;
   cadreSequence: number;
   department: string;
+  departmentOfPosting: string;
+  presentdesignation: string;
   dateOfBirth: Date;
 }
 
@@ -35,6 +37,8 @@ export async function POST(req: NextRequest) {
     password,
     cadreName,
     department,
+    departmentOfPosting,
+    presentdesignation,
     dateOfBirth,
   } = await req.json();
 
@@ -132,6 +136,8 @@ export async function POST(req: NextRequest) {
           emailaddress: email,
           employeeId,
           cadreSequence: newCadreSequence,
+          departmentOfPosting,
+          presentdesignation,
         },
       });
 
@@ -174,6 +180,8 @@ export async function POST(req: NextRequest) {
         cadreId: cadre.id,
         cadreSequence: newCadreSequence,
         department,
+        departmentOfPosting,
+        presentdesignation,
         dateOfBirth: parsedDateOfBirth,
       };
 

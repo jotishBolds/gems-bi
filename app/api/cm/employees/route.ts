@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
         postoffice: true,
         department: true,
         presentdesignation: true,
+        departmentOfPosting: true,
         dateOfInitialAppointment: true,
         dateOfAppointmentGazettedGrade: true,
         dateOfAppointmentPresentPost: true,

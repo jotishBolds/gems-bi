@@ -188,6 +188,12 @@ export async function GET(
       ["Email Address", employee.emailaddress],
       ["Marital Status", employee.maritalstatus || "N/A"],
     ];
+
+    if (employee.maritalstatus?.toLowerCase() === "married") {
+      personalInfo.push(["Spouse Name", employee.spouseName || "N/A"]);
+      personalInfo.push(["Total Children", employee.totalChildren || "N/A"]);
+    }
+
     addTable("Personal Information", personalInfo);
 
     const addressInfo = [
@@ -205,6 +211,7 @@ export async function GET(
     const professionalInfo = [
       ["Department", employee.department],
       ["Present Designation", employee.presentdesignation || "N/A"],
+      ["Department Of Posting", employee.departmentOfPosting || "N/A"],
       ["Nature of Employment", employee.natureOfEmployment || "N/A"],
       [
         "Date of Initial Appointment",

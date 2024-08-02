@@ -30,6 +30,8 @@ const employeeSchema = z
     confirmPassword: z.string(),
     cadreName: z.string().min(1, "Cadre is required"),
     department: z.string(),
+    departmentOfPosting: z.string().min(1, "Department of posting is required"),
+    presentdesignation: z.string().min(1, "Present designation is required"),
     dateOfBirth: z.string().refine((date) => {
       const parsedDate = new Date(date);
       return !isNaN(parsedDate.getTime()) && parsedDate < new Date();
@@ -50,6 +52,7 @@ interface Cadre {
 
 const EmployeeRegister: React.FC = () => {
   const [cadres, setCadres] = useState<Cadre[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otp, setOtp] = useState("");
@@ -71,6 +74,7 @@ const EmployeeRegister: React.FC = () => {
 
   useEffect(() => {
     fetchCadres();
+    fetchDepartments();
   }, []);
 
   const fetchCadres = async () => {
@@ -97,7 +101,30 @@ const EmployeeRegister: React.FC = () => {
       });
     }
   };
-
+  const fetchDepartments = async () => {
+    try {
+      const response = await fetch("/api/cadre/department");
+      if (response.ok) {
+        const data = await response.json();
+        setDepartments(data);
+      } else {
+        showToast({
+          title: "Error",
+          description: "Failed to fetch departments",
+          type: "destructive",
+          actiontext: "Try Again",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      showToast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        type: "destructive",
+        actiontext: "Try Again",
+      });
+    }
+  };
   const handleSelectChange = (value: string) => {
     const selectedCadre = cadres.find((cadre) => cadre.name === value);
     setValue("cadreName", value);
@@ -217,6 +244,25 @@ const EmployeeRegister: React.FC = () => {
                 {errors.empname && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.empname.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <Label
+                  htmlFor="presentdesignation"
+                  className="mb-2 font-medium text-gray-700"
+                >
+                  Present Designation
+                </Label>
+                <Input
+                  id="presentdesignation"
+                  {...register("presentdesignation")}
+                  className="p-2 border border-gray-300 rounded-none"
+                  placeholder="Enter your present designation"
+                />
+                {errors.presentdesignation && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.presentdesignation.message}
                   </p>
                 )}
               </div>
@@ -362,6 +408,35 @@ const EmployeeRegister: React.FC = () => {
                 {errors.cadreName && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.cadreName.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <Label
+                  htmlFor="departmentOfPosting"
+                  className="mb-2 font-medium text-gray-700"
+                >
+                  Department of Posting
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("departmentOfPosting", value)
+                  }
+                >
+                  <SelectTrigger className="p-2 border border-gray-300 rounded-none">
+                    <SelectValue placeholder="Select department of posting" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.departmentOfPosting && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.departmentOfPosting.message}
                   </p>
                 )}
               </div>

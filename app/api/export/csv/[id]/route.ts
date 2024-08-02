@@ -39,13 +39,14 @@ export async function GET(
     const csvStringifier = createObjectCsvStringifier({
       header: [
         { id: "empname", title: "Employee Name" },
-
         { id: "fatherName", title: "Father's Name" },
         { id: "dateOfBirth", title: "Date of Birth" },
         { id: "gender", title: "Gender" },
         { id: "phoneNumber", title: "Phone Number" },
         { id: "emailaddress", title: "Email Address" },
         { id: "maritalstatus", title: "Marital Status" },
+        { id: "spouseName", title: "Spouse Name" },
+        { id: "totalChildren", title: "Total Children" },
         { id: "state", title: "State" },
         { id: "district", title: "District" },
         { id: "constituency", title: "Constituency" },
@@ -57,6 +58,7 @@ export async function GET(
         { id: "cadre", title: "Cadre" },
         { id: "department", title: "Department" },
         { id: "presentdesignation", title: "Present Designation" },
+        { id: "departmentOfPosting", title: "Department Of Posting" },
         { id: "natureOfEmployment", title: "Nature of Employment" },
         {
           id: "dateOfInitialAppointment",
@@ -105,6 +107,15 @@ export async function GET(
           employee.dateOfLastPromotionSubstantive
         ),
         retirement: formatDate(employee.retirement),
+        maritalstatus: employee.maritalstatus || "Not specified",
+        spouseName:
+          employee.maritalstatus?.toLowerCase() === "married"
+            ? employee.spouseName || "Not specified"
+            : "N/A",
+        totalChildren:
+          employee.maritalstatus?.toLowerCase() === "married"
+            ? employee.totalChildren || "Not specified"
+            : "N/A",
       },
     ];
 

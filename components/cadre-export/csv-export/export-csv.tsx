@@ -15,6 +15,8 @@ interface Employee {
   phoneNumber: string;
   emailaddress: string;
   maritalstatus?: string | null;
+  spouseName?: string | null;
+  totalChildren?: string | null;
   state?: string | null;
   district?: string | null;
   constituency?: string | null;
@@ -25,6 +27,7 @@ interface Employee {
   postoffice?: string | null;
   department: string;
   presentdesignation?: string | null;
+  departmentOfPosting?: string | null;
   dateOfInitialAppointment?: Date | null;
   dateOfAppointmentGazettedGrade?: Date | null;
   dateOfAppointmentPresentPost?: Date | null;
@@ -48,6 +51,8 @@ export async function exportToCSV(employees: Employee[]): Promise<string> {
       { id: "phoneNumber", title: "Phone Number" },
       { id: "emailaddress", title: "Email Address" },
       { id: "maritalstatus", title: "Marital Status" },
+      { id: "spouseName", title: "Spouse Name" },
+      { id: "totalChildren", title: "Total Children" },
       { id: "state", title: "State" },
       { id: "district", title: "District" },
       { id: "constituency", title: "Constituency" },
@@ -58,6 +63,7 @@ export async function exportToCSV(employees: Employee[]): Promise<string> {
       { id: "postoffice", title: "Post Office" },
       { id: "department", title: "Department" },
       { id: "presentdesignation", title: "Present Designation" },
+      { id: "departmentOfPosting", title: "Department Of Posting" },
       { id: "cadre", title: "Cadre" },
       { id: "controllingDepartment", title: "Controlling Department" },
       { id: "dateOfInitialAppointment", title: "Date of Initial Appointment" },
@@ -92,7 +98,15 @@ export async function exportToCSV(employees: Employee[]): Promise<string> {
     gender: e.gender ?? "",
     phoneNumber: e.phoneNumber,
     emailaddress: e.emailaddress,
-    maritalstatus: e.maritalstatus ?? "N/A",
+    maritalstatus: e.maritalstatus ?? "Single",
+    spouseName:
+      e.maritalstatus?.toLowerCase() === "married"
+        ? e.spouseName ?? "Not specified"
+        : "N/A",
+    totalChildren:
+      e.maritalstatus?.toLowerCase() === "married"
+        ? e.totalChildren ?? "Not specified"
+        : "N/A",
     state: e.state ?? "N/A",
     district: e.district ?? "N/A",
     constituency: e.constituency ?? "N/A",
@@ -103,6 +117,7 @@ export async function exportToCSV(employees: Employee[]): Promise<string> {
     postoffice: e.postoffice ?? "N/A",
     department: e.department,
     presentdesignation: e.presentdesignation ?? "",
+    departmentOfPosting: e.departmentOfPosting ?? "N/A",
     cadre: e.cadre?.name ?? "N/A",
     controllingDepartment: e.cadre?.controllingDepartment ?? "N/A",
     dateOfInitialAppointment:

@@ -12,6 +12,7 @@ const employeeSchema = z.object({
   department: z.string().nonempty("Department is required"),
   emailaddress: z.string().email().optional().nullable(),
   presentdesignation: z.string().optional().nullable(),
+  departmentOfPosting: z.string().optional().nullable(),
   fatherName: z.string().optional().nullable(),
   phoneNumber: z.string().optional().nullable(),
   gender: z.string().optional().nullable(),
@@ -188,6 +189,7 @@ export async function POST(req: NextRequest) {
           emailaddress:
             validatedData.emailaddress || `employee${index + 2}@example.com`,
           presentdesignation: validatedData.presentdesignation,
+          departmentOfPosting: validatedData.departmentOfPosting,
           fatherName: validatedData.fatherName,
           phoneNumber: validatedData.phoneNumber || `employee${index + 2}`,
           gender: validatedData.gender,

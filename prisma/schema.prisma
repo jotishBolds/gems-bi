@@ -63,6 +63,7 @@ model Employee {
   cadreId                        String?
   cadreSequence                  Int?
   department                     String
+  departmentOfPosting            String?
   presentdesignation             String?
   dateOfInitialAppointment       DateTime?
   dateOfAppointmentGazettedGrade DateTime?

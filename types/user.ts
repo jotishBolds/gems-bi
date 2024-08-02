@@ -33,6 +33,7 @@ export interface EmployeeData {
   postoffice?: string;
   cadre?: Cadre;
   profileImage?: string;
+  departmentOfPosting?: string;
   department?: string;
   presentdesignation?: string;
   dateOfInitialAppointment?: string;

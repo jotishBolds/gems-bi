@@ -166,9 +166,13 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
       ["Phone Number", employee.phoneNumber || "N/A"],
       ["Email Address", employee.emailaddress || "N/A"],
       ["Marital Status", employee.maritalstatus || "N/A"],
-      ["Spouse Name", employee.spouseName || "N/A"],
-      ["Total Children", employee.totalChildren || "N/A"],
     ];
+
+    if (employee.maritalstatus?.toLowerCase() === "married") {
+      personalInfo.push(["Spouse Name", employee.spouseName || "N/A"]);
+      personalInfo.push(["Total Children", employee.totalChildren || "N/A"]);
+    }
+
     addTable("Personal Information", personalInfo);
 
     // Address Information
@@ -189,6 +193,7 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
       ["Cadre", employee.cadre?.name || "Not specified"],
       ["Department", employee.department || "N/A"],
       ["Present Designation", employee.presentdesignation || "N/A"],
+      ["Department Of Posting", employee.departmentOfPosting || "N/A"],
       ["Nature of Employment", employee.natureOfEmployment || "N/A"],
       [
         "Date of Initial Appointment",

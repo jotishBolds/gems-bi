@@ -81,6 +81,7 @@ export async function PUT(
     "postoffice",
     "department",
     "presentdesignation",
+    "departmentOfPosting",
     "dateOfInitialAppointment",
     "dateOfAppointmentGazettedGrade",
     "dateOfAppointmentPresentPost",
@@ -163,6 +164,7 @@ export async function PUT(
               postoffice: filteredData.postoffice,
               department: filteredData.department,
               presentdesignation: filteredData.presentdesignation,
+              departmentOfPosting: filteredData.departmentOfPosting,
               dateOfInitialAppointment: new Date(
                 filteredData.dateOfInitialAppointment
               ),
@@ -196,6 +198,7 @@ export async function PUT(
               postoffice: filteredData.postoffice,
               department: filteredData.department,
               presentdesignation: filteredData.presentdesignation,
+              departmentOfPosting: filteredData.departmentOfPosting,
               dateOfInitialAppointment: new Date(
                 filteredData.dateOfInitialAppointment
               ),

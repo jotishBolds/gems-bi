@@ -23,6 +23,7 @@ interface EmployeeData {
   postoffice: string;
   department: string;
   presentdesignation: string;
+  departmentOfPosting: string;
   dateOfInitialAppointment: string;
   dateOfAppointmentGazettedGrade: string;
   dateOfAppointmentPresentPost: string;
@@ -122,6 +123,7 @@ export async function POST(
       policestation: formData.get("policestation") as string,
       postoffice: formData.get("postoffice") as string,
       department: formData.get("department") as string,
+      departmentOfPosting: formData.get("departmentOfPosting") as string,
       presentdesignation: formData.get("presentdesignation") as string,
       spouseName: formData.get("spouseName") as string | undefined,
       totalChildren: formData.get("totalChildren") as string | undefined,
@@ -288,6 +290,7 @@ export async function PUT(
       "policestation",
       "postoffice",
       "department",
+      "departmentOfPosting",
       "presentdesignation",
       "dateOfInitialAppointment",
       "dateOfAppointmentGazettedGrade",
