@@ -142,13 +142,11 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
 
     // Generate QR Code
     try {
-      const qrCodeData = JSON.stringify({
-        employeeId: employee.employeeId,
-        name: employee.empname,
-        designation: employee.presentdesignation,
-        department: employee.department,
-      });
-      const qrCodeDataUrl = await QRCode.toDataURL(qrCodeData);
+      const loginUrl = new URL(
+        "https://7166srvb-3000.inc1.devtunnels.ms/auth/signin"
+      );
+      loginUrl.searchParams.append("employeeId", employee.employeeId || "");
+      const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
       doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 40, yPosition, 30, 30);
     } catch (error) {
       console.error("Error generating QR code:", error);
