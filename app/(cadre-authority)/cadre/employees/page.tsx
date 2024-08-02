@@ -73,6 +73,8 @@ interface Employee {
   phoneNumber: string;
   emailaddress: string;
   maritalstatus: string;
+  spouseName?: string;
+  totalChildren?: string;
   state: string;
   district: string;
   constituency: string;
@@ -654,10 +656,28 @@ function EmployeeDetails({ employee }: { employee: Employee }) {
               <CardContent>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <InfoItem label="Father's Name" value={employee.fatherName} />
-                  <InfoItem
-                    label="Marital Status"
-                    value={employee.maritalstatus}
-                  />
+
+                  {employee.maritalstatus.toLowerCase() === "married" ? (
+                    <>
+                      <InfoItem
+                        label="Marital Status Details"
+                        value={employee.maritalstatus}
+                      />
+                      <InfoItem
+                        label="Spouse Name"
+                        value={employee.spouseName || "N/A"}
+                      />
+                      <InfoItem
+                        label="Total Children"
+                        value={employee.totalChildren || "N/A"}
+                      />
+                    </>
+                  ) : (
+                    <InfoItem
+                      label="Marital Status Details"
+                      value={employee.maritalstatus}
+                    />
+                  )}
                   <InfoItem
                     label="Total Service"
                     value={employee.TotalLengthOfSerive}

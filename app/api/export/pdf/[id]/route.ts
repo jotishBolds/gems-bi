@@ -128,15 +128,13 @@ export async function GET(
       yPosition + 26
     );
 
-    // Generate QR Code
+    // Generate QR Code with login URL
     try {
-      const qrCodeData = JSON.stringify({
-        id: employee.employeeId,
-        name: employee.empname,
-        designation: employee.presentdesignation,
-        department: employee.department,
-      });
-      const qrCodeDataUrl = await QRCode.toDataURL(qrCodeData);
+      const loginUrl = new URL(
+        "https://7166srvb-3000.inc1.devtunnels.ms/auth/signin"
+      );
+      loginUrl.searchParams.append("employeeId", employee.employeeId || "");
+      const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
       doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 40, yPosition, 30, 30);
     } catch (error) {
       console.error("Error generating QR code:", error);

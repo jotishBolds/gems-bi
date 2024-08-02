@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ZodError } from "zod";
 import { SignInSchemaType, signInSchema } from "@/lib/zod/sign-in-schemas";
 import { useBiToast } from "@/components/page-layout/toast/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Dialog,
   DialogContent,
@@ -45,11 +46,21 @@ const SignIn: React.FC = () => {
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(false);
   const [isEmployee, setIsEmployee] = useState<boolean>(false);
 
+  const searchParams = useSearchParams();
   const router = useRouter();
   const showToast = useBiToast();
   const { data: session, status } = useSession();
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    // Check for employeeId in URL parameters
+    const employeeId = searchParams.get("employeeId");
+    if (employeeId) {
+      setFormData((prev) => ({ ...prev, identifier: employeeId }));
+      setIsEmployee(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
