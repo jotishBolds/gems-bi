@@ -47,9 +47,9 @@ export async function POST(req: NextRequest) {
       where: { name: cadreName },
     });
 
-    if (!cadre) {
+    if (!cadre || !cadre.code) {
       return NextResponse.json(
-        { message: "Invalid cadre name" },
+        { message: "Invalid cadre name or missing cadre code" },
         { status: 400 }
       );
     }
@@ -83,10 +83,7 @@ export async function POST(req: NextRequest) {
     if (existingEmployee) {
       // If employee exists but doesn't have an employeeId, generate one
       if (!existingEmployee.employeeId) {
-        employeeId = generateEmployeeId(
-          cadreName.substring(0, 3).toUpperCase(),
-          newCadreSequence
-        );
+        employeeId = generateEmployeeId(cadre.code, newCadreSequence);
       } else {
         employeeId = existingEmployee.employeeId;
         // If employeeId already exists, don't increment the sequence
@@ -164,10 +161,7 @@ export async function POST(req: NextRequest) {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      employeeId = generateEmployeeId(
-        cadreName.substring(0, 3).toUpperCase(),
-        newCadreSequence
-      );
+      employeeId = generateEmployeeId(cadre.code, newCadreSequence);
 
       const otp = generateOTP();
       const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes

@@ -81,6 +81,7 @@ model Employee {
 model Cadre {
   id                        String     @id @default(uuid())
   name                      String
+  code                      String?
   controllingAdminAuthority String // This will always be "Department of Personnel"
   controllingDepartment     String? // This can be null for some cadres
   controllingUser           User?      @relation("CadreController", fields: [controllingUserId], references: [id])
