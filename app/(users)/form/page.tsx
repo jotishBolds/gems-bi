@@ -59,11 +59,19 @@ const EmployeeForm: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [departments, setDepartments] = useState<string[]>([]);
-  const calculateRetirementDate = (dateOfBirth: string) => {
+  const calculateRetirementDate = (dateOfBirth: string): string => {
+    if (!dateOfBirth) return "";
     const dob = new Date(dateOfBirth);
+    if (isNaN(dob.getTime())) return "";
     const retirementDate = new Date(dob);
     retirementDate.setFullYear(dob.getFullYear() + 60);
     return retirementDate.toISOString().split("T")[0];
+  };
+
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()) ? date.toISOString().split("T")[0] : "";
   };
 
   useEffect(() => {
@@ -88,8 +96,29 @@ const EmployeeForm: React.FC = () => {
           const employeeData: EmployeeFormData & { profileImage?: string } =
             await employeeResponse.json();
           if (employeeData) {
-            // ... (keep existing code for date fields)
-            reset(employeeData);
+            const formattedDateOfBirth = formatDate(employeeData.dateOfBirth);
+            // Convert date strings to the format expected by input[type="date"]
+            const formattedData = {
+              ...employeeData,
+              dateOfBirth: formattedDateOfBirth,
+              retirement: calculateRetirementDate(formattedDateOfBirth),
+              dateOfInitialAppointment: formatDate(
+                employeeData.dateOfInitialAppointment
+              ),
+              dateOfAppointmentGazettedGrade: formatDate(
+                employeeData.dateOfAppointmentGazettedGrade
+              ),
+              dateOfAppointmentPresentPost: formatDate(
+                employeeData.dateOfAppointmentPresentPost
+              ),
+              dateOfLastPromotionSubstantive: formatDate(
+                employeeData.dateOfLastPromotionSubstantive
+              ),
+              dateOfLastPromotionOfficiating: formatDate(
+                employeeData.dateOfLastPromotionOfficiating
+              ),
+            };
+            reset(formattedData);
             setIsUpdate(true);
             if (employeeData.profileImage) {
               setImagePreview(employeeData.profileImage);
@@ -107,8 +136,16 @@ const EmployeeForm: React.FC = () => {
 
     fetchCadresAndEmployeeData();
   }, [session, reset]);
-  const selectedCadreId = watch("cadreId");
 
+  const selectedCadreId = watch("cadreId");
+  const dateOfBirth = watch("dateOfBirth");
+
+  useEffect(() => {
+    if (dateOfBirth) {
+      const retirementDate = calculateRetirementDate(dateOfBirth);
+      setValue("retirement", retirementDate);
+    }
+  }, [dateOfBirth, setValue]);
   useEffect(() => {
     if (selectedCadreId) {
       const selectedCadre = cadres.find(
@@ -120,13 +157,6 @@ const EmployeeForm: React.FC = () => {
     }
   }, [selectedCadreId, cadres, setValue]);
 
-  useEffect(() => {
-    const dateOfBirth = watch("dateOfBirth");
-    if (dateOfBirth) {
-      const retirementDate = calculateRetirementDate(dateOfBirth);
-      setValue("retirement", retirementDate);
-    }
-  }, [watch("dateOfBirth"), setValue]);
   const onSubmit = async (data: EmployeeFormData) => {
     if (!session?.user.id) {
       console.error("User ID not available");
