@@ -4,7 +4,14 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { HelpCircle, LogOut, Users, KeySquare, FormInput } from "lucide-react";
+import {
+  HelpCircle,
+  LogOut,
+  Users,
+  KeySquare,
+  FormInput,
+  User,
+} from "lucide-react";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -80,6 +87,14 @@ const AdminSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               }`}
             >
               <FormInput className="mr-2" size={20} /> Import Employee
+            </Link>
+            <Link
+              href="/user-update"
+              className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
+                isActive("/user-update") ? "bg-gray-50" : ""
+              }`}
+            >
+              <User className="mr-2" size={20} /> User Profile Status
             </Link>
           </nav>
           <span className="flex items-center p-4 text-gray-700 hover:bg-gray-10">

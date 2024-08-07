@@ -80,6 +80,7 @@ const NavBar: React.FC = () => {
             <NavLink href="/auth/admin/register">Register New User</NavLink>
             <NavLink href="/cadre-form">Add Cadre</NavLink>
             <NavLink href="/import-csv">Import</NavLink>
+            <NavLink href="/user-update">User Profile</NavLink>
           </>
         );
       case "CADRE_CONTROLLING_AUTHORITY":
