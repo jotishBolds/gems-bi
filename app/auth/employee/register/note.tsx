@@ -20,6 +20,10 @@ const EmployeeRegisterNotice = () => {
             Your date of birth should exactly match your official documents
           </li>
           <li>Select the cadre that corresponds to your current position</li>
+          <li>
+            Enter all form fields carefully as some cannot be corrected after
+            submission
+          </li>
         </ul>
       </AlertDescription>
     </Alert>

@@ -136,7 +136,7 @@ const ProfilePage: React.FC = () => {
 
   if (!profile) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 mt-0 md:mt-36">
         <Card>
           <CardHeader>
             <Skeleton className="h-8 w-1/3" />
@@ -154,130 +154,132 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="w-full max-w-3xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
-          <CardDescription>
-            View and manage your profile information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="info">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="info">
-                <User className="mr-2 h-4 w-4" />
-                Profile Info
-              </TabsTrigger>
-              <TabsTrigger value="password">
-                <Lock className="mr-2 h-4 w-4" />
-                Change Password
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="info" className="mt-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username" value={profile.username} disabled />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" value={profile.email} disabled />
-                </div>
-                <div>
-                  <Label htmlFor="mobileNumber">Mobile Number</Label>
-                  <Input
-                    id="mobileNumber"
-                    value={profile.mobileNumber}
-                    disabled
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="role">Role</Label>
-                  <Input id="role" value={profile.role} disabled />
-                </div>
-                {profile.employee && (
-                  <>
-                    <div>
-                      <Label htmlFor="employeeId">Employee ID</Label>
-                      <Input
-                        id="employeeId"
-                        value={profile.employee.employeeId}
-                        disabled
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="empname">Employee Name</Label>
-                      <Input
-                        id="empname"
-                        value={profile.employee.empname}
-                        disabled
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="department">Department</Label>
-                      <Input
-                        id="department"
-                        value={profile.employee.department}
-                        disabled
-                      />
-                    </div>
-                    {profile.employee.cadre && (
+    <div className="mt-0 md:mt-36">
+      <div className="container mx-auto p-4 ">
+        <Card className="w-full max-w-3xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+            <CardDescription>
+              View and manage your profile information
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="info">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="info">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile Info
+                </TabsTrigger>
+                <TabsTrigger value="password">
+                  <Lock className="mr-2 h-4 w-4" />
+                  Change Password
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="info" className="mt-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" value={profile.username} disabled />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" value={profile.email} disabled />
+                  </div>
+                  <div>
+                    <Label htmlFor="mobileNumber">Mobile Number</Label>
+                    <Input
+                      id="mobileNumber"
+                      value={profile.mobileNumber}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="role">Role</Label>
+                    <Input id="role" value={profile.role} disabled />
+                  </div>
+                  {profile.employee && (
+                    <>
                       <div>
-                        <Label htmlFor="cadre">Cadre</Label>
+                        <Label htmlFor="employeeId">Employee ID</Label>
                         <Input
-                          id="cadre"
-                          value={profile.employee.cadre.name}
+                          id="employeeId"
+                          value={profile.employee.employeeId}
                           disabled
                         />
                       </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="password" className="mt-4">
-              <form onSubmit={handleSubmit(onPasswordChange)}>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      {...register("newPassword", {
-                        required: "New password is required",
-                      })}
-                    />
-                    {errors.newPassword && (
-                      <p className="text-sm text-red-500">
-                        {errors.newPassword.message}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="confirmPassword">
-                      Confirm New Password
-                    </Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      {...register("confirmPassword", {
-                        required: "Please confirm your new password",
-                      })}
-                    />
-                    {errors.confirmPassword && (
-                      <p className="text-sm text-red-500">
-                        {errors.confirmPassword.message}
-                      </p>
-                    )}
-                  </div>
-                  <Button type="submit">Change Password</Button>
+                      <div>
+                        <Label htmlFor="empname">Employee Name</Label>
+                        <Input
+                          id="empname"
+                          value={profile.employee.empname}
+                          disabled
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="department">Department</Label>
+                        <Input
+                          id="department"
+                          value={profile.employee.department}
+                          disabled
+                        />
+                      </div>
+                      {profile.employee.cadre && (
+                        <div>
+                          <Label htmlFor="cadre">Cadre</Label>
+                          <Input
+                            id="cadre"
+                            value={profile.employee.cadre.name}
+                            disabled
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+              </TabsContent>
+              <TabsContent value="password" className="mt-4">
+                <form onSubmit={handleSubmit(onPasswordChange)}>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <Input
+                        id="newPassword"
+                        type="password"
+                        {...register("newPassword", {
+                          required: "New password is required",
+                        })}
+                      />
+                      {errors.newPassword && (
+                        <p className="text-sm text-red-500">
+                          {errors.newPassword.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="confirmPassword">
+                        Confirm New Password
+                      </Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        {...register("confirmPassword", {
+                          required: "Please confirm your new password",
+                        })}
+                      />
+                      {errors.confirmPassword && (
+                        <p className="text-sm text-red-500">
+                          {errors.confirmPassword.message}
+                        </p>
+                      )}
+                    </div>
+                    <Button type="submit">Change Password</Button>
+                  </div>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

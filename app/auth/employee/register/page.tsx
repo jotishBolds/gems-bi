@@ -8,6 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Eye,
+  EyeOff,
+  User,
+  Briefcase,
+  Building,
+  Users,
+  Calendar,
+  Phone,
+  Mail,
+  Lock,
+} from "lucide-react";
+
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -15,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useBiToast } from "@/components/page-layout/toast/use-toast";
-import { Eye, EyeOff } from "lucide-react";
+
 import { BarLoader } from "react-spinners";
 import Canvas from "../../signin/canva";
 import EmployeeRegisterNotice from "./note";
@@ -212,272 +225,332 @@ const EmployeeRegister: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] py-4 px-4 md:py-8">
+    <div className="flex flex-col items-center justify-center min-h-[90vh] py-8 px-4 bg-gray-50">
       <canvas ref={canvasRef} className="absolute inset-0" />
       <Canvas canvasRef={canvasRef} />
-      <div className="w-full max-w-4xl bg-white bg-opacity-90 p-4 md:p-8 rounded-lg shadow-lg z-10">
-        <div className="flex flex-col items-center justify-center gap-2 mb-4 md:mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-center">
+      <div className="w-full max-w-5xl bg-white p-8 rounded-lg shadow-xl z-10">
+        <div className="flex flex-col items-center justify-center gap-2 mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">
             Employee Registration
           </h1>
-          <p className="text-sm md:text-base text-center">
+          <p className="text-lg text-gray-600">
             Government Employee Management System (GEMS)
           </p>
         </div>
         <EmployeeRegisterNotice />
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {!showOtpInput ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
                 <Label
                   htmlFor="empname"
-                  className="mb-2 font-medium text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
-                  Name
+                  Full Name
                 </Label>
-                <Input
-                  id="empname"
-                  {...register("empname")}
-                  className="p-2 border border-gray-300 rounded-none"
-                  placeholder="Enter your full name"
-                />
+                <div className="relative">
+                  <User
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="empname"
+                    {...register("empname")}
+                    className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Enter your full name"
+                  />
+                </div>
                 {errors.empname && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-xs mt-1">
                     {errors.empname.message}
                   </p>
                 )}
               </div>
-              <div className="flex flex-col">
+
+              <div className="space-y-1">
                 <Label
                   htmlFor="presentdesignation"
-                  className="mb-2 font-medium text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
                   Present Designation
                 </Label>
-                <Input
-                  id="presentdesignation"
-                  {...register("presentdesignation")}
-                  className="p-2 border border-gray-300 rounded-none"
-                  placeholder="Enter your present designation"
-                />
+                <div className="relative">
+                  <Briefcase
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="presentdesignation"
+                    {...register("presentdesignation")}
+                    className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Enter your designation"
+                  />
+                </div>
                 {errors.presentdesignation && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-xs mt-1">
                     {errors.presentdesignation.message}
                   </p>
                 )}
               </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="dateOfBirth"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Date of Birth
-                </Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  {...register("dateOfBirth")}
-                  className="p-2 border border-gray-300 rounded-none"
-                />
-                {errors.dateOfBirth && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.dateOfBirth.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="phoneNumber"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Phone Number
-                </Label>
-                <Input
-                  id="phoneNumber"
-                  {...register("phoneNumber")}
-                  className="p-2 border border-gray-300 rounded-none"
-                  placeholder="Enter your phone number"
-                />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.phoneNumber.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="email"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  className="p-2 border border-gray-300 rounded-none"
-                  placeholder="Enter your email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="password"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
-                    className="p-2 border border-gray-300 rounded-none"
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="confirmPassword"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Confirm Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    {...register("confirmPassword")}
-                    className="p-2 border border-gray-300 rounded-none"
-                    placeholder="Confirm your password"
-                  />
-                  <button
-                    type="button"
-                    onClick={toggleConfirmPasswordVisibility}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <Label
-                  htmlFor="cadreName"
-                  className="mb-2 font-medium text-gray-700"
-                >
-                  Cadre
-                </Label>
-                <Select onValueChange={handleSelectChange}>
-                  <SelectTrigger className="p-2 border border-gray-300 rounded-none">
-                    <SelectValue placeholder="Select a cadre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cadres.map((cadre) => (
-                      <SelectItem key={cadre.id} value={cadre.name}>
-                        {cadre.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.cadreName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.cadreName.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
+
+              <div className="space-y-1">
                 <Label
                   htmlFor="departmentOfPosting"
-                  className="mb-2 font-medium text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
                   Department of Posting
                 </Label>
-                <Select
-                  onValueChange={(value) =>
-                    setValue("departmentOfPosting", value)
-                  }
-                >
-                  <SelectTrigger className="p-2 border border-gray-300 rounded-none">
-                    <SelectValue placeholder="Select department of posting" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Building
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("departmentOfPosting", value)
+                    }
+                  >
+                    <SelectTrigger className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 {errors.departmentOfPosting && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-xs mt-1">
                     {errors.departmentOfPosting.message}
                   </p>
                 )}
               </div>
-              <div className="flex flex-col">
+
+              <div className="space-y-1">
                 <Label
-                  htmlFor="department"
-                  className="mb-2 font-medium text-gray-700"
+                  htmlFor="cadreName"
+                  className="text-sm font-medium text-gray-700"
                 >
-                  Department
+                  Cadre
                 </Label>
-                <Input
-                  id="department"
-                  {...register("department")}
-                  readOnly
-                  className="p-2 border border-gray-300 rounded-none bg-gray-100"
-                />
+                <div className="relative">
+                  <Users
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Select onValueChange={handleSelectChange}>
+                    <SelectTrigger className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                      <SelectValue placeholder="Select a cadre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cadres.map((cadre) => (
+                        <SelectItem key={cadre.id} value={cadre.name}>
+                          {cadre.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {errors.cadreName && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.cadreName.message}
+                  </p>
+                )}
               </div>
+
+              <div className="space-y-1">
+                <Label
+                  htmlFor="dateOfBirth"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Date of Birth
+                </Label>
+                <div className="relative">
+                  <Calendar
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    {...register("dateOfBirth")}
+                    className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                {errors.dateOfBirth && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.dateOfBirth.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <Label
+                  htmlFor="phoneNumber"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Phone Number
+                </Label>
+                <div className="relative">
+                  <Phone
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="phoneNumber"
+                    {...register("phoneNumber")}
+                    className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.phoneNumber.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register("email")}
+                    className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Confirm Password
+                </Label>
+                <div className="relative">
+                  <Lock
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    {...register("confirmPassword")}
+                    className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Confirm password"
+                  />
+                  <button
+                    type="button"
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              <input
+                id="department"
+                {...register("department")}
+                type="hidden"
+                className="hidden"
+              />
             </div>
           ) : (
-            <div className="flex flex-col">
-              <Label htmlFor="otp" className="mb-2 font-medium text-gray-700">
+            <div className="space-y-2">
+              <Label
+                htmlFor="otp"
+                className="text-sm font-medium text-gray-700"
+              >
                 OTP
               </Label>
-              <Input
-                id="otp"
-                name="otp"
-                value={otp}
-                onChange={handleOtpChange}
-                className="p-2 border border-gray-300 rounded-none"
-                placeholder="Enter the OTP sent to your mobile"
-                required
-              />
+              <div className="relative">
+                <Lock
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <Input
+                  id="otp"
+                  name="otp"
+                  value={otp}
+                  onChange={handleOtpChange}
+                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Enter the OTP sent to your mobile"
+                  required
+                />
+              </div>
             </div>
           )}
           <Button
             type="submit"
-            className="border-indigo-600 bg-indigo-600 hover:bg-indigo-700 p-6 rounded-none w-full text-lg flex justify-center items-center mt-6"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-none text-white font-semibold py-3 px-4  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
             disabled={loading}
           >
             {loading ? (
-              <BarLoader width={100} height={3} color={"#ffffff"} />
+              <BarLoader width={100} height={4} color={"#ffffff"} />
             ) : showOtpInput ? (
               "Verify OTP"
             ) : (
