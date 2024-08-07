@@ -19,6 +19,8 @@ import {
   MapPin,
   Clock,
   AlertCircle,
+  Info,
+  Lock,
 } from "lucide-react";
 import {
   Tooltip,
@@ -72,6 +74,8 @@ interface EmployeeData {
   spouseName?: string;
   totalChildren?: string;
   user: UserData;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const EmployeeProfile: React.FC = () => {
@@ -221,7 +225,44 @@ const EmployeeProfile: React.FC = () => {
   const isVerificationPending = () => {
     return employee?.user?.verificationStatus === "Pending";
   };
+  const isUpdatePermanentlyDisabled = () => {
+    if (!employee || !employee.createdAt) return false;
+    const profileCreationDate = new Date(employee.createdAt);
+    const threeMonthsAfterCreation = new Date(profileCreationDate);
+    threeMonthsAfterCreation.setMonth(threeMonthsAfterCreation.getMonth() + 3);
+    return new Date() > threeMonthsAfterCreation;
+  };
 
+  const renderUpdateNote = () => {
+    if (isUpdatePermanentlyDisabled()) {
+      return (
+        <Alert variant="destructive" className="mb-4">
+          <Lock className="h-4 w-4" />
+          <AlertTitle>Profile Locked</AlertTitle>
+          <AlertDescription>
+            Your profile is now permanently locked and can no longer be updated.
+            This lock was applied 3 months after your profile creation on{" "}
+            {formatDate(employee?.createdAt)}.
+          </AlertDescription>
+        </Alert>
+      );
+    } else if (employee?.createdAt) {
+      const lockDate = new Date(employee.createdAt);
+      lockDate.setMonth(lockDate.getMonth() + 3);
+      return (
+        <Alert variant="default" className="mb-4">
+          <Info className="h-4 w-4" />
+          <AlertTitle>Update Period</AlertTitle>
+          <AlertDescription>
+            You can update your profile until{" "}
+            {formatDate(lockDate.toISOString())}. After this date, your profile
+            will be permanently locked.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    return null;
+  };
   if (status === "loading") {
     return <p>Loading...</p>;
   }
@@ -235,6 +276,7 @@ const EmployeeProfile: React.FC = () => {
     <SideBarLayout>
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
         {renderVerificationStatus()}
+        {renderUpdateNote()}
         {isLoading ? (
           <div className="flex items-center justify-center">
             <ScaleLoader />
@@ -470,14 +512,32 @@ const EmployeeProfile: React.FC = () => {
             </Tabs>
 
             <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 mt-6">
-              <Button
-                onClick={handleUpdateForm}
-                variant="outline"
-                className="w-full sm:w-auto"
-                disabled={isVerificationPending()}
-              >
-                Update Profile
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button
+                        onClick={handleUpdateForm}
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                        disabled={
+                          isVerificationPending() ||
+                          isUpdatePermanentlyDisabled()
+                        }
+                      >
+                        Update Profile
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {isUpdatePermanentlyDisabled()
+                      ? "Your profile is permanently locked and can no longer be updated"
+                      : isVerificationPending()
+                      ? "Verification pending"
+                      : "Update your profile"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Button
                 onClick={handleCSVExport}
                 variant="outline"

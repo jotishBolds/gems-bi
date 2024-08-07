@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, HelpCircle, LogOut, BarChart } from "lucide-react";
@@ -85,10 +85,9 @@ const RoleSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               <HelpCircle className="mr-2" size={20} /> Support
             </Link>
             <Link
-              href="/settings"
-              className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
-                isActive("/settings") ? "bg-gray-50" : ""
-              }`}
+              href="/"
+              onClick={() => signOut()}
+              className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 `}
             >
               <LogOut className="mr-2" size={20} /> Signout
             </Link>
