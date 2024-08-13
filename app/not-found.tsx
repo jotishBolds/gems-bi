@@ -30,8 +30,9 @@ const Custom404 = () => {
               </h2>
             </motion.div>
             <p className="text-lg text-gray-600 mb-8 text-center">
-              Oops! It seems like you've ventured into uncharted territory. The
-              page you're looking for might have been moved or doesn't exist.
+              Oops! It seems like you&apos;ve ventured into uncharted territory.
+              The page you&apos;re looking for might have been moved or
+              doesn&apos;t exist.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link href="/" passHref>
