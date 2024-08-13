@@ -19,6 +19,7 @@ import { BarLoader } from "react-spinners";
 import { Volume2, VolumeX } from "lucide-react";
 import Canvas from "./canva";
 import { RoleType } from "@prisma/client";
+import Link from "next/link";
 
 const roleDashboardMap: Record<RoleType, string> = {
   ADMIN: "/dashboard",
@@ -371,9 +372,12 @@ const SignIn: React.FC = () => {
               "Sign In"
             )}
           </Button>
-          <p className="text-center text-gray-500 text-sm mt-2">
-            Forgot your password?
-          </p>
+          <Link href={"/forgot-pass"}>
+            {" "}
+            <p className="text-center text-gray-500 text-sm mt-2">
+              Forgot your password?
+            </p>
+          </Link>
         </form>
         <div className="mt-4 flex justify-end">
           <Button
