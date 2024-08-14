@@ -5,7 +5,12 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { AuthResult, AuthUser } from "@/types/auth";
 import { RoleType } from "@prisma/client";
-
+// import twilio from "twilio";
+// import parsePhoneNumberFromString from "libphonenumber-js";
+// const accountSid = process.env.TWILIO_ACCOUNT_SID;
+// const authToken = process.env.TWILIO_AUTH_TOKEN;
+// const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+// const client = twilio(accountSid, authToken);
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -14,7 +19,26 @@ async function sendSMS(phoneNumber: string, message: string): Promise<void> {
   console.log(`Sending SMS to ${phoneNumber}: ${message}`);
   // Implement your SMS sending logic here
 }
+// async function sendSMS(phoneNumber: string, message: string): Promise<void> {
+//   try {
+//     // Parse and format the phone number to E.164 format
+//     const phoneNumberObject = parsePhoneNumberFromString(phoneNumber, "IN"); // 'IN' is the default country code, adjust as necessary
+//     if (!phoneNumberObject || !phoneNumberObject.isValid()) {
+//       throw new Error("Invalid phone number");
+//     }
+//     const formattedPhoneNumber = phoneNumberObject.format("E.164");
 
+//     await client.messages.create({
+//       body: message,
+//       from: twilioPhoneNumber,
+//       to: formattedPhoneNumber,
+//     });
+//     console.log(`SMS sent to ${formattedPhoneNumber}: ${message}`);
+//   } catch (error) {
+//     console.error("Failed to send SMS:", error);
+//     throw new Error("Failed to send SMS");
+//   }
+// }
 const rolesRequiringOTP: RoleType[] = [
   RoleType.EMPLOYEE,
   RoleType.ADMIN,
