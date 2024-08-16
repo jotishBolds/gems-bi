@@ -25,9 +25,9 @@ const roleDashboardMap: Record<RoleType, string> = {
   ADMIN: "/dashboard",
   EMPLOYEE: "/employee-dashboard",
   CADRE_CONTROLLING_AUTHORITY: "/cadre/statistics",
-  CM: "/emp-dashboard",
-  CS: "/emp-dashboard",
-  DOP: "/emp-dashboard",
+  CM: "/emp-stats",
+  CS: "/emp-stats",
+  DOP: "/emp-stats",
 };
 
 const SignIn: React.FC = () => {

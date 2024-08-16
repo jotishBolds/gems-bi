@@ -76,14 +76,14 @@ const RoleSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
             <p className="text-sm">Role: {session.user.role}</p>
           </span>
           <div className="border-t">
-            <Link
+            {/* <Link
               href="/support"
               className={`flex items-center p-4 text-gray-700 hover:bg-gray-100 ${
                 isActive("/support") ? "bg-gray-50" : ""
               }`}
             >
               <HelpCircle className="mr-2" size={20} /> Support
-            </Link>
+            </Link> */}
             <Link
               href="/"
               onClick={() => signOut()}

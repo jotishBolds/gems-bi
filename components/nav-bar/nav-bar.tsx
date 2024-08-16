@@ -231,6 +231,9 @@ const NavBar: React.FC = () => {
     }
   };
 
+  const handleSignOut = () => {
+    signOut({ callbackUrl: "/" });
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4">
@@ -269,7 +272,7 @@ const NavBar: React.FC = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="text-red-600 focus:bg-red-50"
-                    onClick={() => signOut()}
+                    onClick={handleSignOut}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign out</span>
