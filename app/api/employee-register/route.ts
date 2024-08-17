@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 
 interface EmployeeData {
   employeeId: string;
@@ -15,6 +16,22 @@ interface EmployeeData {
   dateOfBirth: Date;
 }
 
+// Email configuration
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
+const emailHost = process.env.EMAIL_HOST;
+const emailPort = parseInt(process.env.EMAIL_PORT || "587", 10);
+
+const transporter = nodemailer.createTransport({
+  host: emailHost,
+  port: emailPort,
+  secure: emailPort === 465, // true for 465, false for other ports
+  auth: {
+    user: emailUser,
+    pass: emailPass,
+  },
+});
+
 function generateEmployeeId(cadreCode: string, sequence: number): string {
   const randomPart = Math.floor(100000 + Math.random() * 900000);
   return `${randomPart}/${cadreCode}/${sequence}`;
@@ -27,6 +44,21 @@ function generateOTP() {
 async function sendSMS(phoneNumber: string, message: string) {
   console.log(`Sending SMS to ${phoneNumber}: ${message}`);
   // Implement actual SMS sending logic here
+}
+
+async function sendEmail(email: string, subject: string, text: string) {
+  try {
+    await transporter.sendMail({
+      from: emailUser,
+      to: email,
+      subject: subject,
+      text: text,
+    });
+    console.log(`Email sent to ${email}`);
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw new Error("Failed to send email");
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -80,6 +112,9 @@ export async function POST(req: NextRequest) {
     let responseMessage: string;
     let statusCode: number;
 
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+
     if (existingEmployee) {
       // If employee exists but doesn't have an employeeId, generate one
       if (!existingEmployee.employeeId) {
@@ -92,8 +127,6 @@ export async function POST(req: NextRequest) {
 
       // Update existing employee
       const hashedPassword = await bcrypt.hash(password, 10);
-      const otp = generateOTP();
-      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
 
       if (existingEmployee.user) {
         // Update existing user
@@ -139,10 +172,20 @@ export async function POST(req: NextRequest) {
       });
 
       await sendSMS(phoneNumber, `Your OTP for account update is: ${otp}`);
+      await sendEmail(
+        email,
+        "Account Update OTP",
+        `Your OTP for account update is: ${otp}. This OTP will expire in 10 minutes.`
+      );
       await sendSMS(phoneNumber, `Your Employee ID is: ${employeeId}`);
+      await sendEmail(
+        email,
+        "Your Employee ID",
+        `Your Employee ID is: ${employeeId}`
+      );
 
       responseMessage =
-        "Employee information updated successfully. Please verify OTP.";
+        "Employee information updated successfully. Please verify OTP sent to your phone and email.";
       statusCode = 200;
     } else {
       // Create new employee
@@ -162,9 +205,6 @@ export async function POST(req: NextRequest) {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       employeeId = generateEmployeeId(cadre.code, newCadreSequence);
-
-      const otp = generateOTP();
-      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
 
       const employeeData: EmployeeData = {
         employeeId,
@@ -202,9 +242,20 @@ export async function POST(req: NextRequest) {
       });
 
       await sendSMS(phoneNumber, `Your OTP for registration is: ${otp}`);
+      await sendEmail(
+        email,
+        "Registration OTP",
+        `Your OTP for registration is: ${otp}. This OTP will expire in 10 minutes.`
+      );
       await sendSMS(phoneNumber, `Your Employee ID is: ${employeeId}`);
+      await sendEmail(
+        email,
+        "Your Employee ID",
+        `Your Employee ID is: ${employeeId}`
+      );
 
-      responseMessage = "Employee registered successfully. Please verify OTP.";
+      responseMessage =
+        "Employee registered successfully. Please verify OTP sent to your phone and email.";
       statusCode = 201;
     }
 

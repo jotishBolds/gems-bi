@@ -142,12 +142,13 @@ const ForgotPassword: React.FC = () => {
         setCanResendOtp(false);
         showToast({
           title: "OTP Sent",
-          description: "An OTP has been sent to your registered mobile number",
+          description:
+            "An OTP has been sent to your registered mobile number and email",
           type: "default",
           actiontext: "Enter OTP",
         });
         speakMessage(
-          "Please enter the OTP sent to your registered mobile number"
+          "Please enter the OTP sent to your registered mobile number and email"
         );
       } else {
         showToast({
@@ -315,12 +316,12 @@ const ForgotPassword: React.FC = () => {
         showToast({
           title: "OTP Resent",
           description:
-            "A new OTP has been sent to your registered mobile number",
+            "A new OTP has been sent to your registered mobile number and email",
           type: "default",
           actiontext: "Enter OTP",
         });
         speakMessage(
-          "A new OTP has been sent to your registered mobile number"
+          "A new OTP has been sent to your registered mobile number and email"
         );
       } else {
         showToast({
