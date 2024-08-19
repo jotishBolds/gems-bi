@@ -273,14 +273,14 @@ const TestimonialsSection = () => {
       role: "HR Manager",
       content:
         "GEMS has transformed our HR processes, making employee management a breeze. The intuitive interface and powerful features have significantly improved our efficiency.",
-      avatar: "/api/placeholder/100/100",
+      avatar: "/images/user-avatar.png",
     },
     {
       name: "Jane Smith",
       role: "Department Head",
       content:
         "The insights provided by GEMS have helped us make informed decisions and improve overall efficiency. It's been a game-changer for our department's productivity.",
-      avatar: "/api/placeholder/100/100",
+      avatar: "/images/user-avatar.png",
     },
   ];
 
