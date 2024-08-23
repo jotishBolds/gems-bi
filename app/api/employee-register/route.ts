@@ -50,7 +50,8 @@ async function sendEmail(
   email: string,
   subject: string,
   text: string,
-  otp?: string
+  otp?: string,
+  employeeId?: string
 ): Promise<void> {
   try {
     await transporter.sendMail({
@@ -80,6 +81,16 @@ async function sendEmail(
                     <p style="font-size: 32px; font-weight: bold; color: #3b82f6; margin: 0;">${otp}</p>
                   </div>
                   <p style="color: #333333; margin-bottom: 15px;">This OTP will expire in 10 minutes.</p>
+                  `
+                  : ""
+              }
+              ${
+                employeeId
+                  ? `
+                  <p style="color: #333333; margin-bottom: 15px;">Your Employee ID is:</p>
+                  <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 20px;">
+                    <p style="font-size: 24px; font-weight: bold; color: #3b82f6; margin: 0;">${employeeId}</p>
+                  </div>
                   `
                   : ""
               }
@@ -215,14 +226,16 @@ export async function POST(req: NextRequest) {
       await sendEmail(
         email,
         "Account Update OTP",
-        `Your OTP for account update is: ${otp}. This OTP will expire in 10 minutes.`,
-        otp
+        `Your OTP for account update is: ${otp}. This OTP will expire in 10 minutes. Your Employee ID is: ${employeeId}`,
+        otp,
+        employeeId
       );
       await sendSMS(phoneNumber, `Your Employee ID is: ${employeeId}`);
       await sendEmail(
         email,
         "Your Employee ID",
-        `Your Employee ID is: ${employeeId}`
+        `Your Employee ID is: ${employeeId}`,
+        employeeId
       );
 
       responseMessage =
@@ -287,13 +300,15 @@ export async function POST(req: NextRequest) {
         email,
         "Registration OTP",
         `Your OTP for registration is: ${otp}. This OTP will expire in 10 minutes.`,
-        otp
+        otp,
+        employeeId
       );
       await sendSMS(phoneNumber, `Your Employee ID is: ${employeeId}`);
       await sendEmail(
         email,
         "Your Employee ID",
-        `Your Employee ID is: ${employeeId}`
+        `Your Employee ID is: ${employeeId}`,
+        employeeId
       );
 
       responseMessage =
