@@ -131,7 +131,7 @@ export async function GET(
     // Generate QR Code with login URL
     try {
       const loginUrl = new URL(
-        "https://7166srvb-3000.inc1.devtunnels.ms/auth/signin"
+        "https://gems-bi.vercel.app/auth/signin"
       );
       loginUrl.searchParams.append("employeeId", employee.employeeId || "");
       const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
