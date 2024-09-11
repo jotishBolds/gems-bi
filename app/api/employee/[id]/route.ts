@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/auth-options";
-import path from "path";
-import fs from "fs/promises";
+import { put } from '@vercel/blob';
 
 interface EmployeeData {
   empname: string;
@@ -48,6 +47,7 @@ const safeParseDate = (dateString: string | undefined): Date | null => {
   const date = new Date(dateString);
   return isNaN(date.getTime()) ? null : date;
 };
+
 // GET request handler
 export async function GET(
   req: NextRequest,
@@ -93,8 +93,6 @@ export async function GET(
 }
 
 // POST request handler
-
-// Updated POST request handler
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -127,39 +125,24 @@ export async function POST(
       presentdesignation: formData.get("presentdesignation") as string,
       spouseName: formData.get("spouseName") as string | undefined,
       totalChildren: formData.get("totalChildren") as string | undefined,
-      dateOfInitialAppointment: formData.get(
-        "dateOfInitialAppointment"
-      ) as string,
-      dateOfAppointmentGazettedGrade: formData.get(
-        "dateOfAppointmentGazettedGrade"
-      ) as string,
-      dateOfAppointmentPresentPost: formData.get(
-        "dateOfAppointmentPresentPost"
-      ) as string,
+      dateOfInitialAppointment: formData.get("dateOfInitialAppointment") as string,
+      dateOfAppointmentGazettedGrade: formData.get("dateOfAppointmentGazettedGrade") as string,
+      dateOfAppointmentPresentPost: formData.get("dateOfAppointmentPresentPost") as string,
       TotalLengthOfSerive: formData.get("TotalLengthOfSerive") as string,
       retirement: formData.get("retirement") as string,
-      dateOfLastPromotionSubstantive: formData.get(
-        "dateOfLastPromotionSubstantive"
-      ) as string,
-      dateOfLastPromotionOfficiating: formData.get(
-        "dateOfLastPromotionOfficiating"
-      ) as string,
+      dateOfLastPromotionSubstantive: formData.get("dateOfLastPromotionSubstantive") as string,
+      dateOfLastPromotionOfficiating: formData.get("dateOfLastPromotionOfficiating") as string,
       natureOfEmployment: formData.get("natureOfEmployment") as string,
     };
 
     if (employeeData.dateOfBirth) {
-      employeeData.retirement = calculateRetirementDate(
-        employeeData.dateOfBirth
-      );
+      employeeData.retirement = calculateRetirementDate(employeeData.dateOfBirth);
     }
 
     if (employeeData.maritalstatus === "Married") {
       if (!employeeData.spouseName || !employeeData.totalChildren) {
         return NextResponse.json(
-          {
-            error:
-              "Spouse name and total children are required for married employees",
-          },
+          { error: "Spouse name and total children are required for married employees" },
           { status: 400 }
         );
       }
@@ -218,27 +201,22 @@ export async function POST(
       );
     }
 
-    // Handle image upload
+    // Handle image upload using Vercel Blob
     const file = formData.get("profileImage") as File | null;
-    let profileImagePath: string | undefined;
+    let profileImageUrl: string | undefined;
     if (file && file.size > 0) {
-      const fileName = `${params.id}-${Date.now()}${path.extname(file.name)}`;
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filePath = path.join(uploadDir, fileName);
-
-      const fileBuffer = Buffer.from(await file.arrayBuffer());
-      await fs.writeFile(filePath, fileBuffer);
-
-      profileImagePath = `/uploads/${fileName}`;
+      const { url } = await put(`${params.id}-${Date.now()}-${file.name}`, file, {
+        access: 'public',
+      });
+      profileImageUrl = url;
     }
 
-    // Update the existing employee record instead of creating a new one
+    // Update the existing employee record
     const updatedEmployee = await prisma.employee.update({
       where: { userId: params.id },
       data: {
         ...employeeData,
-        profileImage: profileImagePath,
+        profileImage: profileImageUrl,
         cadre: {
           connect: { id: cadreId },
         },
@@ -315,6 +293,7 @@ export async function PUT(
     if (updateData.dateOfBirth) {
       updateData.retirement = calculateRetirementDate(updateData.dateOfBirth);
     }
+
     // Ensure date fields are in ISO-8601 format
     const dateFields: (keyof EmployeeData)[] = [
       "dateOfBirth",
@@ -337,34 +316,27 @@ export async function PUT(
     if (cadreId) {
       updateData.cadre = { connect: { id: cadreId } };
     }
+
     const maritalStatus = formData.get("maritalstatus") as string | undefined;
     if (maritalStatus) {
       updateData.maritalstatus = maritalStatus;
       if (maritalStatus === "Married") {
-        updateData.spouseName = formData.get("spouseName") as
-          | string
-          | undefined;
-        updateData.totalChildren = formData.get("totalChildren") as
-          | string
-          | undefined;
+        updateData.spouseName = formData.get("spouseName") as string | undefined;
+        updateData.totalChildren = formData.get("totalChildren") as string | undefined;
       } else {
         // If marital status is not "Married", set spouse name and total children to null
         updateData.spouseName = null;
         updateData.totalChildren = null;
       }
     }
-    // Handle image upload
+
+    // Handle image upload using Vercel Blob
     const file = formData.get("profileImage") as File | null;
     if (file && file.size > 0) {
-      const fileName = `${params.id}-${Date.now()}${path.extname(file.name)}`;
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
-      await fs.mkdir(uploadDir, { recursive: true });
-      const filePath = path.join(uploadDir, fileName);
-
-      const fileBuffer = Buffer.from(await file.arrayBuffer());
-      await fs.writeFile(filePath, fileBuffer);
-
-      updateData.profileImage = `/uploads/${fileName}`;
+      const { url } = await put(`${params.id}-${Date.now()}-${file.name}`, file, {
+        access: 'public',
+      });
+      updateData.profileImage = url;
     }
 
     // Update employee data in the database
