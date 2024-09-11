@@ -71,7 +71,7 @@ export async function GET(
 
     // Employee photo and basic info
     let imageData;
-   let imageData;
+
     if (employee.profileImage) {
       try {
         const response = await fetch(employee.profileImage);
