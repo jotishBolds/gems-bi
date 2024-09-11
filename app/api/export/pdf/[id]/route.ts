@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 import { createCanvas } from "canvas";
+import fetch from 'node-fetch';
 
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
@@ -70,16 +71,18 @@ export async function GET(
 
     // Employee photo and basic info
     let imageData;
+   let imageData;
     if (employee.profileImage) {
-      const imagePath = path.join(
-        process.cwd(),
-        "public",
-        employee.profileImage
-      );
       try {
-        imageData = await fs.readFile(imagePath);
+        const response = await fetch(employee.profileImage);
+        if (response.ok) {
+          const arrayBuffer = await response.arrayBuffer();
+          imageData = Buffer.from(arrayBuffer);
+        } else {
+          console.error("Failed to fetch image:", response.statusText);
+        }
       } catch (error) {
-        console.error("Error reading image file:", error);
+        console.error("Error fetching image:", error);
       }
     }
 
