@@ -294,6 +294,7 @@ const EmployeeProfile: React.FC = () => {
                         className="w-32 h-32 rounded-full object-cover"
                         width={128}
                         height={128}
+                         unoptimized
                       />
                     ) : (
                       <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center">
