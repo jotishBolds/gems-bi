@@ -688,6 +688,7 @@ const AdminDashboard: React.FC = () => {
                               width={40}
                               height={40}
                               className="rounded-full mr-3"
+                              unoptimized
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { FaWhatsapp } from "react-icons/fa";
 import {
   Dialog,
   DialogContent,
@@ -20,11 +21,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Eye } from "lucide-react";
+import { Eye, Phone, Mail, MessageSquare, UserPlus } from "lucide-react";
 import EmployeeDetails from "./employee-details";
 
 import SearchFilter from "./search-filters";
 import RoleSideBarLayout from "@/components/page-layout/sidebar/all-role-sidebar-layout";
+import ConnectModal from "./call-action";
 
 interface Employee {
   id: string;
@@ -60,6 +62,7 @@ interface Employee {
   natureOfEmployment: string;
   cadreName: string | null;
 }
+
 type AllowedRole = "CM" | "CS" | "DOP";
 
 const isAllowedRole = (role: string | undefined): role is AllowedRole => {
@@ -165,6 +168,7 @@ const EmployeeList: React.FC = () => {
                         <TableHead>Designation</TableHead>
                         <TableHead>Cadre</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-right">Connect</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -201,6 +205,66 @@ const EmployeeList: React.FC = () => {
                                 <EmployeeDetails employee={employee} />
                               </DialogContent>
                             </Dialog>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {/* <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white"
+                                >
+                                  <UserPlus className="w-4 h-4 mr-2" />
+                                  Connect
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-[525px]">
+                                <DialogHeader>
+                                  <DialogTitle className="text-2xl font-bold mb-4 ">
+                                    Connect with {employee.empname}
+                                  </DialogTitle>
+                                </DialogHeader>
+                                <div className="flex justify-between items-center py-4">
+                                  <Button
+                                    onClick={() =>
+                                      window.open(
+                                        `tel:${employee.phoneNumber}`,
+                                        "_blank"
+                                      )
+                                    }
+                                    className="flex-1 mx-1 bg-orange-700 hover:bg-orange-800 text-white"
+                                  >
+                                    <Phone className="w-5 h-5 mr-2" />
+                                    Call
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      window.open(
+                                        `https://wa.me/${employee.phoneNumber}`,
+                                        "_blank"
+                                      )
+                                    }
+                                    className="flex-1 mx-1 bg-[#25D366] hover:bg-[#27b35a] text-white"
+                                  >
+                                    <FaWhatsapp className="w-5 h-5 mr-2" />
+                                    WhatsApp
+                                  </Button>
+                                  <Button
+                                    onClick={() =>
+                                      window.open(
+                                        `mailto:${employee.email}`,
+                                        "_blank"
+                                      )
+                                    }
+                                    className="flex-1 mx-1 bg-blue-500 hover:bg-blue-600 text-white"
+                                  >
+                                    <Mail className="w-5 h-5 mr-2" />
+                                    Email
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog> */}
+                            <ConnectModal employee={employee} />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -267,6 +331,7 @@ const EmployeeListSkeleton: React.FC = () => (
           <TableHead>Designation</TableHead>
           <TableHead>Cadre</TableHead>
           <TableHead className="text-right">Actions</TableHead>
+          <TableHead className="text-right">Connect</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -293,10 +358,14 @@ const EmployeeListSkeleton: React.FC = () => (
             <TableCell className="text-right">
               <Skeleton className="h-8 w-[60px] ml-auto" />
             </TableCell>
+            <TableCell className="text-right">
+              <Skeleton className="h-8 w-[60px] ml-auto" />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
   </div>
 );
+
 export default EmployeeList;
