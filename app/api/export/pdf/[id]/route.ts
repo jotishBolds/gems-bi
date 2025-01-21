@@ -5,24 +5,44 @@ import "jspdf-autotable";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 import { createCanvas } from "canvas";
-
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 
 async function fetchImageAsBase64(url: string): Promise<string> {
   try {
     const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    return `data:image/jpeg;base64,${buffer.toString('base64')}`;
   } catch (error) {
     console.error("Error fetching image:", error);
     throw error;
   }
+}
+
+async function generateQRCode(url: string): Promise<string> {
+  try {
+    const canvas = createCanvas(200, 200);
+    await QRCode.toCanvas(canvas, url, {
+      width: 200,
+      margin: 1,
+    });
+    return canvas.toDataURL();
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    throw error;
+  }
+}
+
+async function generateBarcodePNG(text: string): Promise<string> {
+  const canvas = createCanvas(100, 30);
+  JsBarcode(canvas, text, {
+    width: 1,
+    height: 30,
+    format: "CODE128",
+    displayValue: false,
+  });
+  return canvas.toDataURL();
 }
 
 export async function GET(
@@ -41,7 +61,6 @@ export async function GET(
     }
 
     const { id } = params;
-
     const employee = await prisma.employee.findUnique({
       where: { userId: id },
       include: { cadre: true },
@@ -85,12 +104,19 @@ export async function GET(
     // Employee photo and basic info
     if (employee.profileImage) {
       try {
-        // Fetch image from Vercel Blob URL
         const imageDataUrl = await fetchImageAsBase64(employee.profileImage);
-        doc.addImage(imageDataUrl, "JPEG", margin, yPosition, 25, 25);
+        doc.addImage(
+          imageDataUrl, 
+          "JPEG", 
+          margin, 
+          yPosition, 
+          25, 
+          25, 
+          undefined, 
+          'FAST'
+        );
       } catch (error) {
         console.error("Error adding image to PDF:", error);
-        // Fallback for failed image load
         doc.setFillColor(240, 240, 240);
         doc.rect(margin, yPosition, 25, 25, "F");
         doc.setFontSize(8);
@@ -124,14 +150,20 @@ export async function GET(
 
     // QR Code
     try {
-      const loginUrl = new URL(
-        "gems-bi.vercel.app/auth/signin"
+      const loginUrl = `https://gems-bi.vercel.app/auth/signin?employeeId=${employee.employeeId || ""}`;
+      const qrCodeDataUrl = await generateQRCode(loginUrl);
+      doc.addImage(
+        qrCodeDataUrl, 
+        "PNG", 
+        pageWidth - 35, 
+        yPosition, 
+        25, 
+        25, 
+        undefined, 
+        'FAST'
       );
-      loginUrl.searchParams.append("employeeId", employee.employeeId || "");
-      const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
-      doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 35, yPosition, 25, 25);
     } catch (error) {
-      console.error("Error generating QR code:", error);
+      console.error("Error adding QR code to PDF:", error);
     }
 
     yPosition += 30;
@@ -304,15 +336,4 @@ export async function GET(
       }
     );
   }
-}
-
-async function generateBarcodePNG(text: string): Promise<string> {
-  const canvas = createCanvas(100, 30);
-  JsBarcode(canvas, text, {
-    width: 1,
-    height: 30,
-    format: "CODE128",
-    displayValue: false,
-  });
-  return canvas.toDataURL();
 }
