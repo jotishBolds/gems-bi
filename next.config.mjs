@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['3ueks2jaxjpgpjeg.public.blob.vercel-storage.com']
+  },
   async headers() {
     return [
       {
