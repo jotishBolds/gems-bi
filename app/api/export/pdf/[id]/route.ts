@@ -2,14 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import path from "path";
-import fs from "fs/promises";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 import { createCanvas } from "canvas";
 
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
+
+async function fetchImageAsBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    throw error;
+  }
+}
 
 export async function GET(
   request: NextRequest,
@@ -69,22 +83,22 @@ export async function GET(
     yPosition = 30;
 
     // Employee photo and basic info
-    let imageData;
     if (employee.profileImage) {
-      const imagePath = path.join(
-        process.cwd(),
-        "public",
-        employee.profileImage
-      );
       try {
-        imageData = await fs.readFile(imagePath);
+        // Fetch image from Vercel Blob URL
+        const imageDataUrl = await fetchImageAsBase64(employee.profileImage);
+        doc.addImage(imageDataUrl, "JPEG", margin, yPosition, 25, 25);
       } catch (error) {
-        console.error("Error reading image file:", error);
+        console.error("Error adding image to PDF:", error);
+        // Fallback for failed image load
+        doc.setFillColor(240, 240, 240);
+        doc.rect(margin, yPosition, 25, 25, "F");
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text("No Image", margin + 12.5, yPosition + 12.5, {
+          align: "center",
+        });
       }
-    }
-
-    if (imageData) {
-      doc.addImage(imageData, "JPEG", margin, yPosition, 25, 25);
     } else {
       doc.setFillColor(240, 240, 240);
       doc.rect(margin, yPosition, 25, 25, "F");
@@ -165,8 +179,10 @@ export async function GET(
       return (doc as any).lastAutoTable.finalY + 5;
     };
 
-    // Prepare tables
+    // Personal Information table data
     const personalInfo = [
+      ["Employee Name", employee.empname || "N/A"],
+      ["Employee ID", employee.employeeId || "N/A"],
       ["Father's Name", employee.fatherName || "N/A"],
       [
         "Date of Birth",
@@ -175,8 +191,8 @@ export async function GET(
           : "N/A",
       ],
       ["Gender", employee.gender || "N/A"],
-      ["Phone Number", employee.phoneNumber],
-      ["Email Address", employee.emailaddress],
+      ["Phone Number", employee.phoneNumber || "N/A"],
+      ["Email Address", employee.emailaddress || "N/A"],
       ["Marital Status", employee.maritalstatus || "N/A"],
     ];
 
@@ -185,19 +201,22 @@ export async function GET(
       personalInfo.push(["Total Children", employee.totalChildren || "N/A"]);
     }
 
+    // Address Information table data
     const addressInfo = [
       ["State", employee.state || "N/A"],
       ["District", employee.district || "N/A"],
       ["Constituency", employee.constituency || "N/A"],
-      ["GPU", employee.gpu || "N/A"],
+      ["GPU(Gram Panchayat Unit)", employee.gpu || "N/A"],
       ["Ward", employee.ward || "N/A"],
       ["Pincode", employee.pin || "N/A"],
-      ["Police Station", employee.policestation || "N/A"],
-      ["Post Office", employee.postoffice || "N/A"],
+      ["Police Station(PS)", employee.policestation || "N/A"],
+      ["Post Office(PO)", employee.postoffice || "N/A"],
     ];
 
+    // Professional Information table data
     const professionalInfo = [
-      ["Department", employee.department],
+      ["Cadre", employee.cadre?.name || "Not specified"],
+      ["Department", employee.department || "N/A"],
       ["Present Designation", employee.presentdesignation || "N/A"],
       ["Department Of Posting", employee.departmentOfPosting || "N/A"],
       ["Nature of Employment", employee.natureOfEmployment || "N/A"],
@@ -208,7 +227,7 @@ export async function GET(
           : "N/A",
       ],
       [
-        "Date of Appointment (Gazetted Grade)",
+        "Date of Appointment in Gazetted Grade",
         employee.dateOfAppointmentGazettedGrade
           ? employee.dateOfAppointmentGazettedGrade.toISOString().split("T")[0]
           : "N/A",
@@ -221,13 +240,13 @@ export async function GET(
       ],
       ["Total Length of Service", employee.TotalLengthOfSerive || "N/A"],
       [
-        "Date of Last Promotion (Officiating)",
+        "Date of Last Promotion Officiating",
         employee.dateOfLastPromotionOfficiating
           ? employee.dateOfLastPromotionOfficiating.toISOString().split("T")[0]
           : "N/A",
       ],
       [
-        "Date of Last Promotion (Substantive)",
+        "Date of Last Promotion Substantive",
         employee.dateOfLastPromotionSubstantive
           ? employee.dateOfLastPromotionSubstantive.toISOString().split("T")[0]
           : "N/A",
@@ -240,7 +259,7 @@ export async function GET(
       ],
     ];
 
-    // Add tables
+    // Add tables to PDF
     const columnWidth = (pageWidth - 2 * margin) / 2 - 5;
     yPosition = addTable("Personal Information", personalInfo, yPosition, [
       columnWidth,
