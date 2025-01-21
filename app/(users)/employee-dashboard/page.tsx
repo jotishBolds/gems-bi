@@ -287,21 +287,23 @@ const EmployeeProfile: React.FC = () => {
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
                   <div className="relative">
-                    {employee.profileImage ? (
-                      <Image
-                        src={employee.profileImage}
-                        alt={`${employee.empname}`}
-                        className="w-32 h-32 rounded-full object-cover"
-                        width={128}
-                        height={128}
-                      />
-                    ) : (
-                      <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center">
-                        <span className="text-4xl text-gray-600">
-                          {employee.empname}
-                        </span>
-                      </div>
-                    )}
+                   {employee.profileImage ? (
+  <Image
+    src={employee.profileImage}
+    alt={`${employee.empname}'s profile`}
+    className="w-32 h-32 rounded-full object-cover"
+    width={128}
+    height={128}
+    unoptimized
+    priority
+  />
+) : (
+  <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center">
+    <span className="text-4xl text-gray-600">
+      {employee.empname?.charAt(0).toUpperCase()}
+    </span>
+  </div>
+)}
                     <div className="absolute -bottom-2 -right-2">
                       {renderVerificationBadge()}
                     </div>
