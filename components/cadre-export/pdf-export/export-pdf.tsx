@@ -157,7 +157,7 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
     // Generate QR Code
     try {
       const loginUrl = new URL(
-        "https://7166srvb-3000.inc1.devtunnels.ms/auth/signin"
+        "gems-bi.vercel.app/auth/signin"
       );
       loginUrl.searchParams.append("employeeId", employee.employeeId || "");
       const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
