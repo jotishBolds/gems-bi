@@ -1,11 +1,26 @@
+//File : /api/cadrer-export/pdf-export/export-pdf.ts
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import path from "path";
-import fs from "fs/promises";
 import { Employee } from "@/lib/types/em-types";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
 import { createCanvas } from "canvas";
+
+async function fetchImageAsBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    throw error;
+  }
+}
 
 export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
   const doc = new jsPDF();
@@ -100,22 +115,22 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
     let yPosition = 30;
 
     // Add employee photo and basic info
-    let imageData;
     if (employee.profileImage) {
-      const imagePath = path.join(
-        process.cwd(),
-        "public",
-        employee.profileImage
-      );
       try {
-        imageData = await fs.readFile(imagePath);
+        // Fetch image from Vercel Blob URL
+        const imageDataUrl = await fetchImageAsBase64(employee.profileImage);
+        doc.addImage(imageDataUrl, "JPEG", margin, yPosition, 25, 25);
       } catch (error) {
-        console.error("Error reading image file:", error);
+        console.error("Error adding image to PDF:", error);
+        // Fallback for failed image load
+        doc.setFillColor(240, 240, 240);
+        doc.rect(margin, yPosition, 25, 25, "F");
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text("No Image", margin + 12.5, yPosition + 12.5, {
+          align: "center",
+        });
       }
-    }
-
-    if (imageData) {
-      doc.addImage(imageData, "JPEG", margin, yPosition, 25, 25);
     } else {
       doc.setFillColor(240, 240, 240);
       doc.rect(margin, yPosition, 25, 25, "F");
