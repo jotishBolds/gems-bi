@@ -3,7 +3,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, HelpCircle, LogOut, BarChart } from "lucide-react";
+import { Users, HelpCircle, LogOut, BarChart, Star } from "lucide-react";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -73,7 +73,16 @@ const RoleSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
             ))}
           </nav>
           <span className="flex items-center p-4 text-gray-700 hover:bg-gray-10">
-            <p className="text-sm">Role: {session.user.role}</p>
+            {/* <p className="text-sm">Role: {session.user.role}</p> */}
+            {session.user.role === "CM" ? (
+              <p className="text-sm flex">
+                <Star className="fill-yellow-400 text-yellow-400" />
+                <Star className="fill-yellow-400 text-yellow-400" />
+                <Star className="fill-yellow-400 text-yellow-400" />
+              </p>
+            ) : (
+              <p className="text-sm">Role: {session.user.role}</p>
+            )}
           </span>
           <div className="border-t">
             {/* <Link
