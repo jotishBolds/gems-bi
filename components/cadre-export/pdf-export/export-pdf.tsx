@@ -3,8 +3,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Employee } from "@/lib/types/em-types";
 import QRCode from "qrcode";
-import JsBarcode from "jsbarcode";
-import { createCanvas } from "canvas";
+import bwipjs from "bwip-js";
 
 async function fetchImageAsBase64(url: string): Promise<string> {
   try {
@@ -156,9 +155,7 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
 
     // Generate QR Code
     try {
-      const loginUrl = new URL(
-        "gems-bi.vercel.app/auth/signin"
-      );
+      const loginUrl = new URL("gems-bi.vercel.app/auth/signin");
       loginUrl.searchParams.append("employeeId", employee.employeeId || "");
       const qrCodeDataUrl = await QRCode.toDataURL(loginUrl.toString());
       doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 35, yPosition, 25, 25);
@@ -256,12 +253,26 @@ export async function exportToPDF(employees: Employee[]): Promise<ArrayBuffer> {
 }
 
 async function generateBarcodePNG(text: string): Promise<string> {
-  const canvas = createCanvas(100, 30);
-  JsBarcode(canvas, text, {
-    width: 1,
-    height: 30,
-    format: "CODE128",
-    displayValue: false,
-  });
-  return canvas.toDataURL();
+  try {
+    const buffer = await bwipjs.toBuffer({
+      bcid: "code128", // Barcode type
+      text: text, // Text to encode
+      scale: 3, // 3x scaling factor
+      height: 10, // Bar height, in millimeters
+      includetext: false, // Show human-readable text
+      textxalign: "center", // Always good to set this
+    });
+
+    // Convert buffer to base64 data URL
+    const base64 = buffer.toString("base64");
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    console.error("Error generating barcode:", error);
+    // Return a simple fallback
+    return `data:image/svg+xml;base64,${btoa(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="30"><text x="50" y="15" text-anchor="middle">' +
+        text +
+        "</text></svg>"
+    )}`;
+  }
 }

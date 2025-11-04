@@ -3,8 +3,7 @@ import { getServerSession } from "next-auth/next";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import QRCode from "qrcode";
-import JsBarcode from "jsbarcode";
-import { createCanvas } from "canvas";
+import bwipjs from "bwip-js";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 
@@ -13,7 +12,7 @@ async function fetchImageAsBase64(url: string): Promise<string> {
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    return `data:image/jpeg;base64,${buffer.toString('base64')}`;
+    return `data:image/jpeg;base64,${buffer.toString("base64")}`;
   } catch (error) {
     console.error("Error fetching image:", error);
     throw error;
@@ -22,12 +21,10 @@ async function fetchImageAsBase64(url: string): Promise<string> {
 
 async function generateQRCode(url: string): Promise<string> {
   try {
-    const canvas = createCanvas(200, 200);
-    await QRCode.toCanvas(canvas, url, {
+    return await QRCode.toDataURL(url, {
       width: 200,
       margin: 1,
     });
-    return canvas.toDataURL();
   } catch (error) {
     console.error("Error generating QR code:", error);
     throw error;
@@ -35,14 +32,28 @@ async function generateQRCode(url: string): Promise<string> {
 }
 
 async function generateBarcodePNG(text: string): Promise<string> {
-  const canvas = createCanvas(100, 30);
-  JsBarcode(canvas, text, {
-    width: 1,
-    height: 30,
-    format: "CODE128",
-    displayValue: false,
-  });
-  return canvas.toDataURL();
+  try {
+    const buffer = await bwipjs.toBuffer({
+      bcid: "code128", // Barcode type
+      text: text, // Text to encode
+      scale: 3, // 3x scaling factor
+      height: 10, // Bar height, in millimeters
+      includetext: false, // Show human-readable text
+      textxalign: "center", // Always good to set this
+    });
+
+    // Convert buffer to base64 data URL
+    const base64 = buffer.toString("base64");
+    return `data:image/png;base64,${base64}`;
+  } catch (error) {
+    console.error("Error generating barcode:", error);
+    // Return a simple fallback
+    return `data:image/svg+xml;base64,${btoa(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="30"><text x="50" y="15" text-anchor="middle">' +
+        text +
+        "</text></svg>"
+    )}`;
+  }
 }
 
 export async function GET(
@@ -106,14 +117,14 @@ export async function GET(
       try {
         const imageDataUrl = await fetchImageAsBase64(employee.profileImage);
         doc.addImage(
-          imageDataUrl, 
-          "JPEG", 
-          margin, 
-          yPosition, 
-          25, 
-          25, 
-          undefined, 
-          'FAST'
+          imageDataUrl,
+          "JPEG",
+          margin,
+          yPosition,
+          25,
+          25,
+          undefined,
+          "FAST"
         );
       } catch (error) {
         console.error("Error adding image to PDF:", error);
@@ -150,17 +161,19 @@ export async function GET(
 
     // QR Code
     try {
-      const loginUrl = `https://gems-bi.vercel.app/auth/signin?employeeId=${employee.employeeId || ""}`;
+      const loginUrl = `https://gems-bi.vercel.app/auth/signin?employeeId=${
+        employee.employeeId || ""
+      }`;
       const qrCodeDataUrl = await generateQRCode(loginUrl);
       doc.addImage(
-        qrCodeDataUrl, 
-        "PNG", 
-        pageWidth - 35, 
-        yPosition, 
-        25, 
-        25, 
-        undefined, 
-        'FAST'
+        qrCodeDataUrl,
+        "PNG",
+        pageWidth - 35,
+        yPosition,
+        25,
+        25,
+        undefined,
+        "FAST"
       );
     } catch (error) {
       console.error("Error adding QR code to PDF:", error);
