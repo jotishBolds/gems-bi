@@ -52,7 +52,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         >
           <div className="sticky top-0 bg-white z-10">
             <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-bold">Hi, {session.user.username}</h2>
+              <h2 className="text-lg font-bold">
+                Namaste, {session.user.username}
+              </h2>
             </div>
           </div>
           <nav className="flex-grow overflow-y-auto">

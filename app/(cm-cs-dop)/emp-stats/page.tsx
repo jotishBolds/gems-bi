@@ -99,11 +99,11 @@ const EmployeeStatistics: React.FC = () => {
   const totalEmployees = employees.length;
   const regularEmployees = employees.filter(
     (employee) =>
-      employee.natureOfEmployment === "Temporary-Permanent (Regular)"
+      employee.natureOfEmployment === "Temporary-Permanent (Regular)",
   );
   const temporaryEmployees = employees.filter(
     (employee) =>
-      employee.natureOfEmployment !== "Temporary-Permanent (Regular)"
+      employee.natureOfEmployment !== "Temporary-Permanent (Regular)",
   );
 
   const filteredEmployees = employees.filter((employee) => {
@@ -115,20 +115,23 @@ const EmployeeStatistics: React.FC = () => {
     return true;
   });
 
-  const departmentCounts = filteredEmployees.reduce((acc, employee) => {
-    acc[employee.department] = (acc[employee.department] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const departmentCounts = filteredEmployees.reduce(
+    (acc, employee) => {
+      acc[employee.department] = (acc[employee.department] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const departmentData = Object.entries(departmentCounts).map(
-    ([name, value]) => ({ name, value })
+    ([name, value]) => ({ name, value }),
   );
 
   const currentDate = new Date();
   const oneYearFromNow = new Date(
     currentDate.getFullYear() + 1,
     currentDate.getMonth(),
-    currentDate.getDate()
+    currentDate.getDate(),
   );
 
   const retiringEmployees = filteredEmployees.filter((employee) => {
@@ -259,8 +262,8 @@ const EmployeeStatistics: React.FC = () => {
                   {employeeFilter === "all"
                     ? "All Employees"
                     : employeeFilter === "regular"
-                    ? "Regular Employees"
-                    : "Temporary Employees"}
+                      ? "Regular Employees"
+                      : "Temporary Employees"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -297,7 +300,7 @@ const EmployeeStatistics: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {employee.retirement
                               ? new Date(
-                                  employee.retirement
+                                  employee.retirement,
                                 ).toLocaleDateString()
                               : "N/A"}
                           </td>
@@ -310,6 +313,150 @@ const EmployeeStatistics: React.FC = () => {
             </Card>
           </CollapsibleContent>
         </Collapsible>
+
+        {employeeFilter === "regular" && (
+          <div className="mt-8 space-y-8">
+            {/* Main Cadre (SCS) Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">
+                  Main Cadre (SCS)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {[
+                          "Cadre",
+                          "Designation",
+                          "Sanctioned Strength",
+                          "Men in Position",
+                          "Vacancy",
+                        ].map((h) => (
+                          <th
+                            key={h}
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {[
+                        ["SCS", "Secretary", 12, 12, 0],
+                        ["SCS", "Special Secretary", 27, 25, 2],
+                        ["SCS", "Additional Secretary", 35, 30, 5],
+                        ["SCS", "Joint Secretary", 40, 36, 4],
+                        ["SCS", "Deputy Secretary", 50, 45, 5],
+                        ["SCS", "Under Secretary", 60, 55, 5],
+                      ].map((row, i) => (
+                        <tr key={i}>
+                          {row.map((cell, j) => (
+                            <td
+                              key={j}
+                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                            >
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-100 font-semibold">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          SCS TOTAL
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {" "}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          224
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          203
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          21
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Sub-Ordinate Cadre Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">
+                  Sub-Ordinate Cadre
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {[
+                          "Cadre",
+                          "Designation",
+                          "Sanctioned Strength",
+                          "Men in Position",
+                          "Vacancy",
+                        ].map((h) => (
+                          <th
+                            key={h}
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {[
+                        ["Sub-Ordinate", "Office Superintendent", 100, 92, 8],
+                        ["Sub-Ordinate", "Head Assistant (HA)", 200, 185, 15],
+                        ["Sub-Ordinate", "UDC", 800, 750, 50],
+                        ["Sub-Ordinate", "LDC", 1900, 1800, 100],
+                      ].map((row, i) => (
+                        <tr key={i}>
+                          {row.map((cell, j) => (
+                            <td
+                              key={j}
+                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                            >
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-100 font-semibold">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          Sub-Ordinate TOTAL
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {" "}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          3000
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          2827
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          173
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           <Card>
