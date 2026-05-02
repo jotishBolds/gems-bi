@@ -27,9 +27,20 @@ export async function GET(req: NextRequest) {
       _count: { _all: true },
     });
 
+    const employmentTypeDistribution = await prisma.employee.groupBy({
+      by: ["employmentType"],
+      _count: { _all: true },
+    });
+
+    const temporarySubTypeDistribution = await prisma.employee.groupBy({
+      by: ["temporarySubType"],
+      _count: { _all: true },
+      where: { employmentType: "TEMPORARY" },
+    });
+
     const currentDate = new Date();
     const sixMonthsFromNow = new Date(
-      currentDate.setMonth(currentDate.getMonth() + 6)
+      currentDate.setMonth(currentDate.getMonth() + 6),
     );
 
     const upcomingRetirements = await prisma.employee.findMany({
@@ -63,13 +74,15 @@ export async function GET(req: NextRequest) {
       totalCadres,
       roleDistribution,
       cadreDistribution,
+      employmentTypeDistribution,
+      temporarySubTypeDistribution,
       upcomingRetirements,
     });
   } catch (error) {
     console.error("Error fetching statistics:", error);
     return NextResponse.json(
       { error: "Failed to fetch statistics" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

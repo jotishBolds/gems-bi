@@ -19,6 +19,19 @@ enum RoleType {
   DOP
 }
 
+enum EmploymentType {
+  REGULAR_PERMANENT
+  TEMPORARY
+}
+
+enum TemporarySubType {
+  ADHOC
+  CONSOLIDATED
+  MUSTER_ROLL
+  WORK_CHARGE
+  DAILY_WAGES
+}
+
 model User {
   id                 String    @id @default(uuid())
   username           String    @unique
@@ -73,6 +86,8 @@ model Employee {
   dateOfLastPromotionSubstantive DateTime?
   dateOfLastPromotionOfficiating DateTime?
   natureOfEmployment             String?
+  employmentType                 EmploymentType?
+  temporarySubType               TemporarySubType?
   supportRequests                Support[]
   createdAt                      DateTime  @default(now())
   updatedAt                      DateTime  @updatedAt

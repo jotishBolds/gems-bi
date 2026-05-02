@@ -44,6 +44,8 @@ export interface EmployeeData {
   dateOfLastPromotionSubstantive?: string;
   dateOfLastPromotionOfficiating?: string;
   natureOfEmployment?: string;
+  employmentType?: string;
+  temporarySubType?: string;
 }
 
 export type CombinedUserData = UserData &
@@ -51,4 +53,6 @@ export type CombinedUserData = UserData &
     cadreId?: string;
     profileImage?: string;
     verificationStatus?: string;
+    employmentType?: string;
+    temporarySubType?: string;
   };

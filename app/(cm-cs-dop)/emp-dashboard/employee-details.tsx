@@ -48,6 +48,8 @@ interface Employee {
   dateOfLastPromotionSubstantive: string;
   dateOfLastPromotionOfficiating: string;
   natureOfEmployment: string;
+  employmentType: string | null;
+  temporarySubType: string | null;
   cadreName: string | null;
 }
 
@@ -172,6 +174,34 @@ const EmployeeDetails: React.FC<{ employee: Employee }> = ({ employee }) => {
                     label="Nature of Employment"
                     value={employee.natureOfEmployment}
                   />
+                  {employee.employmentType && (
+                    <InfoItem
+                      label="Employment Type"
+                      value={
+                        employee.employmentType === "REGULAR_PERMANENT"
+                          ? "Regular / Permanent"
+                          : "Temporary Employee"
+                      }
+                    />
+                  )}
+                  {employee.temporarySubType && (
+                    <InfoItem
+                      label="Temporary Sub-Type"
+                      value={
+                        employee.temporarySubType === "ADHOC"
+                          ? "Adhoc"
+                          : employee.temporarySubType === "CONSOLIDATED"
+                            ? "Consolidated"
+                            : employee.temporarySubType === "MUSTER_ROLL"
+                              ? "Muster Roll (MR)"
+                              : employee.temporarySubType === "WORK_CHARGE"
+                                ? "Work Charge"
+                                : employee.temporarySubType === "DAILY_WAGES"
+                                  ? "Daily Wages"
+                                  : employee.temporarySubType
+                      }
+                    />
+                  )}
                   <InfoItem
                     label="Department Of Posting"
                     value={employee.departmentOfPosting || "N/A"}

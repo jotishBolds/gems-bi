@@ -45,6 +45,8 @@ export async function GET(req: NextRequest) {
         dateOfLastPromotionSubstantive: true,
         dateOfLastPromotionOfficiating: true,
         natureOfEmployment: true,
+        employmentType: true,
+        temporarySubType: true,
         profileImage: true,
         cadre: {
           select: {
@@ -75,7 +77,7 @@ export async function GET(req: NextRequest) {
     console.error("Error fetching employees:", error);
     return NextResponse.json(
       { error: "Failed to fetch employees" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -35,6 +35,8 @@ interface Employee {
   department: string;
   retirement: string | null;
   natureOfEmployment: string;
+  employmentType: string | null;
+  temporarySubType: string | null;
 }
 
 const COLORS = [
@@ -53,6 +55,8 @@ const EmployeeStatistics: React.FC = () => {
   const [employeeFilter, setEmployeeFilter] = useState<
     "all" | "regular" | "temporary"
   >("all");
+  const [temporarySubTypeFilter, setTemporarySubTypeFilter] =
+    useState<string>("all");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -99,19 +103,49 @@ const EmployeeStatistics: React.FC = () => {
   const totalEmployees = employees.length;
   const regularEmployees = employees.filter(
     (employee) =>
+      employee.employmentType === "REGULAR_PERMANENT" ||
       employee.natureOfEmployment === "Temporary-Permanent (Regular)",
   );
   const temporaryEmployees = employees.filter(
     (employee) =>
-      employee.natureOfEmployment !== "Temporary-Permanent (Regular)",
+      employee.employmentType === "TEMPORARY" ||
+      (employee.employmentType == null &&
+        employee.natureOfEmployment !== "Temporary-Permanent (Regular)"),
+  );
+
+  // Temporary sub-type breakdowns
+  const adhocEmployees = employees.filter(
+    (e) => e.temporarySubType === "ADHOC",
+  );
+  const consolidatedEmployees = employees.filter(
+    (e) => e.temporarySubType === "CONSOLIDATED",
+  );
+  const musterRollEmployees = employees.filter(
+    (e) => e.temporarySubType === "MUSTER_ROLL",
+  );
+  const workChargeEmployees = employees.filter(
+    (e) => e.temporarySubType === "WORK_CHARGE",
+  );
+  const dailyWagesEmployees = employees.filter(
+    (e) => e.temporarySubType === "DAILY_WAGES",
   );
 
   const filteredEmployees = employees.filter((employee) => {
     if (employeeFilter === "all") return true;
     if (employeeFilter === "regular")
-      return employee.natureOfEmployment === "Temporary-Permanent (Regular)";
-    if (employeeFilter === "temporary")
-      return employee.natureOfEmployment !== "Temporary-Permanent (Regular)";
+      return (
+        employee.employmentType === "REGULAR_PERMANENT" ||
+        employee.natureOfEmployment === "Temporary-Permanent (Regular)"
+      );
+    if (employeeFilter === "temporary") {
+      const isTemp =
+        employee.employmentType === "TEMPORARY" ||
+        (employee.employmentType == null &&
+          employee.natureOfEmployment !== "Temporary-Permanent (Regular)");
+      if (!isTemp) return false;
+      if (temporarySubTypeFilter === "all") return true;
+      return employee.temporarySubType === temporarySubTypeFilter;
+    }
     return true;
   });
 
@@ -152,6 +186,13 @@ const EmployeeStatistics: React.FC = () => {
 
   const handleFilterClick = (filter: "all" | "regular" | "temporary") => {
     setEmployeeFilter(filter);
+    if (filter !== "temporary") setTemporarySubTypeFilter("all");
+    setIsOpen(true);
+  };
+
+  const handleSubTypeFilterClick = (subType: string) => {
+    setTemporarySubTypeFilter(subType);
+    setEmployeeFilter("temporary");
     setIsOpen(true);
   };
 
@@ -190,11 +231,14 @@ const EmployeeStatistics: React.FC = () => {
                   onClick={() => handleFilterClick("regular")}
                   className="flex-grow"
                 >
-                  Regular ({regularEmployees.length})
+                  Regular/Permanent ({regularEmployees.length})
                 </Button>
                 <Button
                   variant={
-                    employeeFilter === "temporary" ? "default" : "outline"
+                    employeeFilter === "temporary" &&
+                    temporarySubTypeFilter === "all"
+                      ? "default"
+                      : "outline"
                   }
                   size="sm"
                   onClick={() => handleFilterClick("temporary")}
@@ -203,6 +247,42 @@ const EmployeeStatistics: React.FC = () => {
                   Temporary ({temporaryEmployees.length})
                 </Button>
               </div>
+              {employeeFilter === "temporary" && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {[
+                    { key: "all", label: "All Temp." },
+                    { key: "ADHOC", label: `Adhoc (${adhocEmployees.length})` },
+                    {
+                      key: "CONSOLIDATED",
+                      label: `Consolidated (${consolidatedEmployees.length})`,
+                    },
+                    {
+                      key: "MUSTER_ROLL",
+                      label: `Muster Roll (${musterRollEmployees.length})`,
+                    },
+                    {
+                      key: "WORK_CHARGE",
+                      label: `Work Charge (${workChargeEmployees.length})`,
+                    },
+                    {
+                      key: "DAILY_WAGES",
+                      label: `Daily Wages (${dailyWagesEmployees.length})`,
+                    },
+                  ].map(({ key, label }) => (
+                    <Button
+                      key={key}
+                      variant={
+                        temporarySubTypeFilter === key ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => handleSubTypeFilterClick(key)}
+                      className="text-xs"
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 

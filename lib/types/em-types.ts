@@ -54,6 +54,14 @@ export interface Employee {
   dateOfLastPromotionSubstantive?: Date | null;
   dateOfLastPromotionOfficiating?: Date | null;
   natureOfEmployment?: string | null;
+  employmentType?: "REGULAR_PERMANENT" | "TEMPORARY" | null;
+  temporarySubType?:
+    | "ADHOC"
+    | "CONSOLIDATED"
+    | "MUSTER_ROLL"
+    | "WORK_CHARGE"
+    | "DAILY_WAGES"
+    | null;
   createdAt: Date;
   updatedAt: Date;
 }

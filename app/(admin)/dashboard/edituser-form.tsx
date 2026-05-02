@@ -82,7 +82,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
     name: keyof CombinedUserData,
     label: string,
     type: string,
-    options: string[] = []
+    options: string[] = [],
   ) => (
     <div className="mb-4">
       <label
@@ -100,7 +100,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
               onValueChange={field.onChange}
               defaultValue={safelyConvertValue(
                 field.value,
-                "string"
+                "string",
               ).toString()}
             >
               <SelectTrigger className="w-full">
@@ -239,30 +239,42 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
           "CO-Terminus",
           "Project Contract",
         ])}
+        {renderField("employmentType", "Employment Type", "select", [
+          "REGULAR_PERMANENT",
+          "TEMPORARY",
+        ])}
+        {watch("employmentType") === "TEMPORARY" &&
+          renderField("temporarySubType", "Temporary Sub-Type", "select", [
+            "ADHOC",
+            "CONSOLIDATED",
+            "MUSTER_ROLL",
+            "WORK_CHARGE",
+            "DAILY_WAGES",
+          ])}
         {renderField(
           "dateOfInitialAppointment",
           "Date of Initial Appointment",
-          "date"
+          "date",
         )}
         {renderField(
           "dateOfAppointmentGazettedGrade",
           "Date of Appointment Gazetted Grade",
-          "date"
+          "date",
         )}
         {renderField(
           "dateOfAppointmentPresentPost",
           "Date of Appointment Present Post",
-          "date"
+          "date",
         )}
         {renderField(
           "dateOfLastPromotionSubstantive",
           "Date Of Last Promotion Substantive",
-          "date"
+          "date",
         )}
         {renderField(
           "dateOfLastPromotionOfficiating",
           "Date Of Last Promotion Officiating",
-          "date"
+          "date",
         )}
         {renderField("TotalLengthOfSerive", "Total Length of Service", "text")}
         {renderField("retirement", "Retirement", "date")}

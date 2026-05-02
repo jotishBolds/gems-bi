@@ -60,6 +60,8 @@ interface Employee {
   dateOfLastPromotionSubstantive: string;
   dateOfLastPromotionOfficiating: string;
   natureOfEmployment: string;
+  employmentType: string | null;
+  temporarySubType: string | null;
   cadreName: string | null;
 }
 
@@ -108,6 +110,8 @@ const EmployeeList: React.FC = () => {
       department: string;
       cadre: string;
       designation: string;
+      employmentType: string;
+      temporarySubType: string;
     }) => {
       const results = employees.filter((employee) => {
         const empnameMatch = (employee.empname || "")
@@ -125,8 +129,21 @@ const EmployeeList: React.FC = () => {
           (employee.cadreName || "").toLowerCase() ===
             (filters.cadre || "").toLowerCase();
 
+        const employmentTypeMatch =
+          filters.employmentType === "all" ||
+          (employee.employmentType || "") === filters.employmentType;
+
+        const temporarySubTypeMatch =
+          filters.temporarySubType === "all" ||
+          (employee.temporarySubType || "") === filters.temporarySubType;
+
         return (
-          empnameMatch && designationMatch && departmentMatch && cadreMatch
+          empnameMatch &&
+          designationMatch &&
+          departmentMatch &&
+          cadreMatch &&
+          employmentTypeMatch &&
+          temporarySubTypeMatch
         );
       });
 
@@ -134,14 +151,14 @@ const EmployeeList: React.FC = () => {
       setTotalPages(Math.ceil(results.length / itemsPerPage));
       setCurrentPage(1);
     },
-    [employees]
+    [employees],
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredEmployees.slice(
     indexOfFirstItem,
-    indexOfLastItem
+    indexOfLastItem,
   );
 
   return (

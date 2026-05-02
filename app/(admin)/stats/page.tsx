@@ -37,6 +37,14 @@ interface StatisticsData {
   totalCadres: number;
   roleDistribution: { role: string; _count: { _all: number } }[];
   cadreDistribution: { cadreId: string; _count: { _all: number } }[];
+  employmentTypeDistribution: {
+    employmentType: string | null;
+    _count: { _all: number };
+  }[];
+  temporarySubTypeDistribution: {
+    temporarySubType: string | null;
+    _count: { _all: number };
+  }[];
   upcomingRetirements: {
     user: { username: string; email: string };
     cadre: { name: string };
@@ -103,6 +111,33 @@ const AdminStatistics: React.FC = () => {
     name: cadre.cadreId,
     value: cadre._count._all,
   }));
+
+  const employmentTypeLabel = (type: string | null) => {
+    if (type === "REGULAR_PERMANENT") return "Regular / Permanent";
+    if (type === "TEMPORARY") return "Temporary";
+    return "Unknown";
+  };
+
+  const temporarySubTypeLabel = (subType: string | null) => {
+    if (subType === "ADHOC") return "Adhoc";
+    if (subType === "CONSOLIDATED") return "Consolidated";
+    if (subType === "MUSTER_ROLL") return "Muster Roll (MR)";
+    if (subType === "WORK_CHARGE") return "Work Charge";
+    if (subType === "DAILY_WAGES") return "Daily Wages";
+    return subType || "Unknown";
+  };
+
+  const employmentTypeData = statistics.employmentTypeDistribution.map((e) => ({
+    name: employmentTypeLabel(e.employmentType),
+    value: e._count._all,
+  }));
+
+  const temporarySubTypeData = statistics.temporarySubTypeDistribution.map(
+    (e) => ({
+      name: temporarySubTypeLabel(e.temporarySubType),
+      value: e._count._all,
+    }),
+  );
 
   return (
     <AdminSideBarLayout>
@@ -197,6 +232,61 @@ const AdminStatistics: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Employment Type Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">
+                  By Employment Type
+                </h3>
+                <ResponsiveContainer width="100%" height={260}>
+                  <PieChart>
+                    <Pie
+                      data={employmentTypeData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={90}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {employmentTypeData.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              {temporarySubTypeData.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-600 mb-2">
+                    Temporary Employee Sub-Types
+                  </h3>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={temporarySubTypeData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#FF8042" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="mb-8">
           <CardHeader>

@@ -5,7 +5,7 @@ import { authOptions } from "../../../auth/[...nextauth]/auth-options";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
 
@@ -45,13 +45,13 @@ export async function GET(
     console.error("Error fetching user:", error);
     return NextResponse.json(
       { error: "Failed to fetch user details" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
 
@@ -91,13 +91,15 @@ export async function PUT(
     "dateOfLastPromotionSubstantive",
     "dateOfLastPromotionOfficiating",
     "natureOfEmployment",
+    "employmentType",
+    "temporarySubType",
     "spouseName",
     "totalChildren",
   ];
 
   // Filter out non-updatable fields
   const filteredData: { [key: string]: any } = Object.fromEntries(
-    Object.entries(data).filter(([key]) => updatableFields.includes(key))
+    Object.entries(data).filter(([key]) => updatableFields.includes(key)),
   );
 
   // Ensure date fields are in ISO-8601 format
@@ -166,13 +168,13 @@ export async function PUT(
               presentdesignation: filteredData.presentdesignation,
               departmentOfPosting: filteredData.departmentOfPosting,
               dateOfInitialAppointment: new Date(
-                filteredData.dateOfInitialAppointment
+                filteredData.dateOfInitialAppointment,
               ),
               dateOfAppointmentGazettedGrade: new Date(
-                filteredData.dateOfAppointmentGazettedGrade
+                filteredData.dateOfAppointmentGazettedGrade,
               ),
               dateOfAppointmentPresentPost: new Date(
-                filteredData.dateOfAppointmentPresentPost
+                filteredData.dateOfAppointmentPresentPost,
               ),
               TotalLengthOfSerive: filteredData.TotalLengthOfSerive,
               retirement: new Date(filteredData.retirement),
@@ -200,21 +202,23 @@ export async function PUT(
               presentdesignation: filteredData.presentdesignation,
               departmentOfPosting: filteredData.departmentOfPosting,
               dateOfInitialAppointment: new Date(
-                filteredData.dateOfInitialAppointment
+                filteredData.dateOfInitialAppointment,
               ),
               dateOfAppointmentGazettedGrade: new Date(
-                filteredData.dateOfAppointmentGazettedGrade
+                filteredData.dateOfAppointmentGazettedGrade,
               ),
               dateOfAppointmentPresentPost: new Date(
-                filteredData.dateOfAppointmentPresentPost
+                filteredData.dateOfAppointmentPresentPost,
               ),
               dateOfLastPromotionSubstantive: new Date(
-                filteredData.dateOfLastPromotionSubstantive
+                filteredData.dateOfLastPromotionSubstantive,
               ),
               dateOfLastPromotionOfficiating: new Date(
-                filteredData.dateOfLastPromotionOfficiating
+                filteredData.dateOfLastPromotionOfficiating,
               ),
               natureOfEmployment: filteredData.natureOfEmployment,
+              employmentType: filteredData.employmentType || undefined,
+              temporarySubType: filteredData.temporarySubType || undefined,
               TotalLengthOfSerive: filteredData.TotalLengthOfSerive,
               retirement: new Date(filteredData.retirement),
               cadre: { connect: { id: filteredData.cadreId } },
@@ -237,14 +241,14 @@ export async function PUT(
     console.error("Failed to update user:", error);
     return NextResponse.json(
       { error: "Failed to update user", details: (error as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
 
@@ -280,13 +284,13 @@ export async function DELETE(
     console.error("Failed to delete user:", error);
     return NextResponse.json(
       { error: "Failed to delete user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
 
@@ -312,7 +316,7 @@ export async function POST(
     console.error("Failed to update verification status:", error);
     return NextResponse.json(
       { error: "Failed to update verification status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

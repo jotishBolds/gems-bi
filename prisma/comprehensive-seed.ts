@@ -1,4 +1,9 @@
-import { PrismaClient, RoleType } from "@prisma/client";
+import {
+  PrismaClient,
+  RoleType,
+  EmploymentType,
+  TemporarySubType,
+} from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -197,7 +202,9 @@ function generateEmployeeData(
   name: string,
   gender: "MALE" | "FEMALE",
   employeeIdNumber: number,
-  cadreCode?: string
+  cadreCode?: string,
+  employmentType?: EmploymentType,
+  temporarySubType?: TemporarySubType,
 ) {
   const district =
     sikkimeseLocations.districts[
@@ -220,14 +227,15 @@ function generateEmployeeData(
   const maxDate = new Date("1995-12-31");
   const dateOfBirth = new Date(
     baseDate.getTime() +
-      Math.random() * (maxDate.getTime() - baseDate.getTime())
+      Math.random() * (maxDate.getTime() - baseDate.getTime()),
   );
 
   const appointmentDate = new Date("2000-01-01");
   const maxAppointmentDate = new Date("2020-12-31");
   const dateOfInitialAppointment = new Date(
     appointmentDate.getTime() +
-      Math.random() * (maxAppointmentDate.getTime() - appointmentDate.getTime())
+      Math.random() *
+        (maxAppointmentDate.getTime() - appointmentDate.getTime()),
   );
 
   const retirement = new Date(dateOfBirth);
@@ -280,22 +288,24 @@ function generateEmployeeData(
     dateOfAppointmentGazettedGrade: dateOfInitialAppointment,
     dateOfAppointmentPresentPost: new Date(
       dateOfInitialAppointment.getTime() +
-        Math.random() * (Date.now() - dateOfInitialAppointment.getTime())
+        Math.random() * (Date.now() - dateOfInitialAppointment.getTime()),
     ),
     TotalLengthOfSerive: `${Math.floor(
       (Date.now() - dateOfInitialAppointment.getTime()) /
-        (1000 * 60 * 60 * 24 * 365)
+        (1000 * 60 * 60 * 24 * 365),
     )} years`,
     retirement,
     dateOfLastPromotionSubstantive: new Date(
       dateOfInitialAppointment.getTime() +
-        Math.random() * (Date.now() - dateOfInitialAppointment.getTime())
+        Math.random() * (Date.now() - dateOfInitialAppointment.getTime()),
     ),
     dateOfLastPromotionOfficiating: new Date(
       dateOfInitialAppointment.getTime() +
-        Math.random() * (Date.now() - dateOfInitialAppointment.getTime())
+        Math.random() * (Date.now() - dateOfInitialAppointment.getTime()),
     ),
     natureOfEmployment: Math.random() > 0.2 ? "Permanent" : "Contractual",
+    employmentType: employmentType || EmploymentType.REGULAR_PERMANENT,
+    temporarySubType: temporarySubType || null,
   };
 }
 
@@ -405,12 +415,49 @@ async function main() {
     },
   });
 
+  // Additional admin users
+  const adminUser2 = await prisma.user.create({
+    data: {
+      username: "admin2",
+      password: hashedPassword,
+      email: "admin2@sikkim.gov.in",
+      mobileNumber: "9800000081",
+      role: RoleType.ADMIN,
+      isVerified: true,
+      verificationStatus: "Verified",
+    },
+  });
+
+  const adminUser3 = await prisma.user.create({
+    data: {
+      username: "admin3",
+      password: hashedPassword,
+      email: "admin3@sikkim.gov.in",
+      mobileNumber: "9800000082",
+      role: RoleType.ADMIN,
+      isVerified: true,
+      verificationStatus: "Verified",
+    },
+  });
+
   const cmUser = await prisma.user.create({
     data: {
       username: "cm.sikkim",
       password: hashedPassword,
       email: "cm@sikkim.gov.in",
       mobileNumber: "9800000002",
+      role: RoleType.CM,
+      isVerified: true,
+      verificationStatus: "Verified",
+    },
+  });
+
+  const cmUser2 = await prisma.user.create({
+    data: {
+      username: "cm.sikkim2",
+      password: hashedPassword,
+      email: "cm2@sikkim.gov.in",
+      mobileNumber: "9800000083",
       role: RoleType.CM,
       isVerified: true,
       verificationStatus: "Verified",
@@ -429,6 +476,18 @@ async function main() {
     },
   });
 
+  const csUser2 = await prisma.user.create({
+    data: {
+      username: "cs.sikkim2",
+      password: hashedPassword,
+      email: "cs2@sikkim.gov.in",
+      mobileNumber: "9800000084",
+      role: RoleType.CS,
+      isVerified: true,
+      verificationStatus: "Verified",
+    },
+  });
+
   const dopUser = await prisma.user.create({
     data: {
       username: "dop.sikkim",
@@ -441,10 +500,22 @@ async function main() {
     },
   });
 
+  const dopUser2 = await prisma.user.create({
+    data: {
+      username: "dop.sikkim2",
+      password: hashedPassword,
+      email: "dop2@sikkim.gov.in",
+      mobileNumber: "9800000085",
+      role: RoleType.DOP,
+      isVerified: true,
+      verificationStatus: "Verified",
+    },
+  });
+
   // Create Cadre Controlling Authority Users
   console.log("🏛️ Creating cadre controlling authority users...");
   const cadreAuthorities = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 8; i++) {
     const cadreAuth = await prisma.user.create({
       data: {
         username: `cadre.auth.${i + 1}`,
@@ -476,16 +547,35 @@ async function main() {
   const employeePassword = await bcrypt.hash("employee123", 10);
   let currentEmployeeId = nextEmployeeId;
 
-  // Create 30 male employees
-  for (let i = 0; i < 30; i++) {
+  // Employment type distribution config
+  const employmentConfigs: {
+    type: EmploymentType;
+    subType?: TemporarySubType;
+  }[] = [
+    { type: EmploymentType.REGULAR_PERMANENT },
+    { type: EmploymentType.REGULAR_PERMANENT },
+    { type: EmploymentType.REGULAR_PERMANENT },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.ADHOC },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.CONSOLIDATED },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.MUSTER_ROLL },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.WORK_CHARGE },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.DAILY_WAGES },
+  ];
+
+  // Create 50 male employees
+  for (let i = 0; i < 50; i++) {
     const name = sikkimeseNames.male[i % sikkimeseNames.male.length];
     const cadre =
       createdCadres[Math.floor(Math.random() * createdCadres.length)];
+    const empConfig =
+      employmentConfigs[Math.floor(Math.random() * employmentConfigs.length)];
     const employeeData = generateEmployeeData(
       name,
       "MALE",
       currentEmployeeId,
-      cadre.code || undefined
+      cadre.code || undefined,
+      empConfig.type,
+      empConfig.subType,
     );
 
     const user = await prisma.user.create({
@@ -512,16 +602,20 @@ async function main() {
     currentEmployeeId++;
   }
 
-  // Create 25 female employees
-  for (let i = 0; i < 25; i++) {
+  // Create 50 female employees
+  for (let i = 0; i < 50; i++) {
     const name = sikkimeseNames.female[i % sikkimeseNames.female.length];
     const cadre =
       createdCadres[Math.floor(Math.random() * createdCadres.length)];
+    const empConfig =
+      employmentConfigs[Math.floor(Math.random() * employmentConfigs.length)];
     const employeeData = generateEmployeeData(
       name,
       "FEMALE",
       currentEmployeeId,
-      cadre.code || undefined
+      cadre.code || undefined,
+      empConfig.type,
+      empConfig.subType,
     );
 
     const user = await prisma.user.create({
@@ -541,6 +635,47 @@ async function main() {
         ...employeeData,
         userId: user.id,
         cadreId: cadre.id,
+        cadreSequence: currentEmployeeId,
+      },
+    });
+
+    currentEmployeeId++;
+  }
+
+  // Create 20 extra employees without cadre (unattached)
+  for (let i = 0; i < 20; i++) {
+    const isMale = i % 2 === 0;
+    const namePool = isMale ? sikkimeseNames.male : sikkimeseNames.female;
+    const name = namePool[i % namePool.length];
+    const empConfig =
+      employmentConfigs[Math.floor(Math.random() * employmentConfigs.length)];
+    const employeeData = generateEmployeeData(
+      name,
+      isMale ? "MALE" : "FEMALE",
+      currentEmployeeId,
+      undefined,
+      empConfig.type,
+      empConfig.subType,
+    );
+
+    const user = await prisma.user.create({
+      data: {
+        username: `emp${String(currentEmployeeId).padStart(3, "0")}`,
+        password: employeePassword,
+        email: `${name.toLowerCase().replace(/\s+/g, ".")}${currentEmployeeId}extra@sikkim.gov.in`,
+        mobileNumber: `97${String(1000000 + currentEmployeeId).padStart(8, "0")}`,
+        role: RoleType.EMPLOYEE,
+        isVerified: Math.random() > 0.3,
+        verificationStatus: Math.random() > 0.3 ? "Verified" : "Pending",
+      },
+    });
+
+    await prisma.employee.create({
+      data: {
+        ...employeeData,
+        emailaddress: `${name.toLowerCase().replace(/\s+/g, ".")}${currentEmployeeId}extra@sikkim.gov.in`,
+        phoneNumber: `97${String(1000000 + currentEmployeeId).padStart(8, "0")}`,
+        userId: user.id,
         cadreSequence: currentEmployeeId,
       },
     });
@@ -568,15 +703,18 @@ async function main() {
   console.log("✅ Database seeding completed successfully!");
   console.log("\n📊 Summary:");
   console.log(`- ${createdCadres.length} cadres created`);
-  console.log(`- 1 admin user created (username: admin, password: admin123)`);
-  console.log(`- 1 CM user created (username: cm.sikkim, password: admin123)`);
-  console.log(`- 1 CS user created (username: cs.sikkim, password: admin123)`);
   console.log(
-    `- 1 DOP user created (username: dop.sikkim, password: admin123)`
+    `- 3 admin users created (admin, admin2, admin3 / password: admin123)`,
   );
+  console.log(`- 2 CM users (cm.sikkim, cm.sikkim2 / password: admin123)`);
+  console.log(`- 2 CS users (cs.sikkim, cs.sikkim2 / password: admin123)`);
+  console.log(`- 2 DOP users (dop.sikkim, dop.sikkim2 / password: admin123)`);
   console.log(`- ${cadreAuthorities.length} cadre authority users created`);
   console.log(
-    `- 55 employees created with Sikkimese names (password: employee123)`
+    `- 120 employees created with Sikkimese names (password: employee123)`,
+  );
+  console.log(
+    `  * Employment types: Regular/Permanent and Temporary (Adhoc, Consolidated, Muster Roll, Work Charge, Daily Wages)`,
   );
   console.log(`- 15 sample support requests created`);
   console.log("\n🎯 You can now login with:");
@@ -585,7 +723,7 @@ async function main() {
   console.log("CS: username='cs.sikkim', password='admin123'");
   console.log("DOP: username='dop.sikkim', password='admin123'");
   console.log(
-    "Employee: username='emp001' to 'emp055', password='employee123'"
+    "Employee: username='emp001' to 'emp120', password='employee123'",
   );
 }
 

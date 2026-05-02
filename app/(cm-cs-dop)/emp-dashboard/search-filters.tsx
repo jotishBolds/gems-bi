@@ -23,6 +23,8 @@ interface SearchFilters {
   department: string;
   cadre: string;
   designation: string;
+  employmentType: string;
+  temporarySubType: string;
 }
 
 interface SearchFilterProps {
@@ -35,10 +37,12 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
     department: "",
     cadre: "all",
     designation: "",
+    employmentType: "all",
+    temporarySubType: "all",
   });
   const [cadres, setCadres] = useState<{ id: string; name: string }[]>([]);
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   useEffect(() => {
@@ -67,6 +71,18 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
     setFilters((prev) => ({ ...prev, cadre: value }));
   };
 
+  const handleEmploymentTypeChange = (value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      employmentType: value,
+      temporarySubType: "all",
+    }));
+  };
+
+  const handleTemporarySubTypeChange = (value: string) => {
+    setFilters((prev) => ({ ...prev, temporarySubType: value }));
+  };
+
   const handleSearch = () => {
     onSearch(filters);
     setAccordionValue(undefined);
@@ -78,6 +94,8 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
       department: "",
       cadre: "all",
       designation: "",
+      employmentType: "all",
+      temporarySubType: "all",
     };
     setFilters(clearedFilters);
     onSearch(clearedFilters);
@@ -180,6 +198,53 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700">
+                  Employment Type
+                </Label>
+                <Select
+                  onValueChange={handleEmploymentTypeChange}
+                  value={filters.employmentType}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="REGULAR_PERMANENT">
+                      Regular / Temporary-Permanent
+                    </SelectItem>
+                    <SelectItem value="TEMPORARY">
+                      Temporary Employee
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {filters.employmentType === "TEMPORARY" && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Temporary Sub-Type
+                  </Label>
+                  <Select
+                    onValueChange={handleTemporarySubTypeChange}
+                    value={filters.temporarySubType}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select sub-type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Sub-Types</SelectItem>
+                      <SelectItem value="ADHOC">Adhoc</SelectItem>
+                      <SelectItem value="CONSOLIDATED">Consolidated</SelectItem>
+                      <SelectItem value="MUSTER_ROLL">
+                        Muster Roll (MR)
+                      </SelectItem>
+                      <SelectItem value="WORK_CHARGE">Work Charge</SelectItem>
+                      <SelectItem value="DAILY_WAGES">Daily Wages</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
@@ -273,6 +338,49 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
             </SelectContent>
           </Select>
         </div>
+        <div className="flex-1">
+          <Label className="text-sm font-medium text-gray-700">
+            Employment Type
+          </Label>
+          <Select
+            onValueChange={handleEmploymentTypeChange}
+            value={filters.employmentType}
+          >
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="REGULAR_PERMANENT">
+                Regular / Temporary-Permanent
+              </SelectItem>
+              <SelectItem value="TEMPORARY">Temporary Employee</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        {filters.employmentType === "TEMPORARY" && (
+          <div className="flex-1">
+            <Label className="text-sm font-medium text-gray-700">
+              Temporary Sub-Type
+            </Label>
+            <Select
+              onValueChange={handleTemporarySubTypeChange}
+              value={filters.temporarySubType}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select sub-type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sub-Types</SelectItem>
+                <SelectItem value="ADHOC">Adhoc</SelectItem>
+                <SelectItem value="CONSOLIDATED">Consolidated</SelectItem>
+                <SelectItem value="MUSTER_ROLL">Muster Roll (MR)</SelectItem>
+                <SelectItem value="WORK_CHARGE">Work Charge</SelectItem>
+                <SelectItem value="DAILY_WAGES">Daily Wages</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="flex space-x-2">
           <Button
             variant="outline"
