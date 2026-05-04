@@ -124,6 +124,7 @@ const AdminStatistics: React.FC = () => {
     if (subType === "MUSTER_ROLL") return "Muster Roll (MR)";
     if (subType === "WORK_CHARGE") return "Work Charge";
     if (subType === "DAILY_WAGES") return "Daily Wages";
+    if (subType === "CONTRACTUAL") return "Contractual";
     return subType || "Unknown";
   };
 

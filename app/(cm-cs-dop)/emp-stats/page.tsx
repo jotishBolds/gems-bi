@@ -129,6 +129,9 @@ const EmployeeStatistics: React.FC = () => {
   const dailyWagesEmployees = employees.filter(
     (e) => e.temporarySubType === "DAILY_WAGES",
   );
+  const contractualEmployees = employees.filter(
+    (e) => e.temporarySubType === "CONTRACTUAL",
+  );
 
   const filteredEmployees = employees.filter((employee) => {
     if (employeeFilter === "all") return true;
@@ -267,6 +270,10 @@ const EmployeeStatistics: React.FC = () => {
                     {
                       key: "DAILY_WAGES",
                       label: `Daily Wages (${dailyWagesEmployees.length})`,
+                    },
+                    {
+                      key: "CONTRACTUAL",
+                      label: `Contractual (${contractualEmployees.length})`,
                     },
                   ].map(({ key, label }) => (
                     <Button

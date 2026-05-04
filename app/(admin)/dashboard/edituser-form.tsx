@@ -231,14 +231,6 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
         </div>
         {renderField("department", "Department", "text")}
         {renderField("presentdesignation", "Present Designation", "text")}
-        {renderField("natureOfEmployment", "Nature of Employment", "select", [
-          "Temporary-Permanent (Regular)",
-          "Adhoc",
-          "Muster Roll",
-          "Contract",
-          "CO-Terminus",
-          "Project Contract",
-        ])}
         {renderField("employmentType", "Employment Type", "select", [
           "REGULAR_PERMANENT",
           "TEMPORARY",
@@ -250,6 +242,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
             "MUSTER_ROLL",
             "WORK_CHARGE",
             "DAILY_WAGES",
+            "CONTRACTUAL",
           ])}
         {renderField(
           "dateOfInitialAppointment",

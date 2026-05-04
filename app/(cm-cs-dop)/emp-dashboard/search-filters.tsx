@@ -241,6 +241,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
                       </SelectItem>
                       <SelectItem value="WORK_CHARGE">Work Charge</SelectItem>
                       <SelectItem value="DAILY_WAGES">Daily Wages</SelectItem>
+                      <SelectItem value="CONTRACTUAL">Contractual</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -377,6 +378,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ onSearch }) => {
                 <SelectItem value="MUSTER_ROLL">Muster Roll (MR)</SelectItem>
                 <SelectItem value="WORK_CHARGE">Work Charge</SelectItem>
                 <SelectItem value="DAILY_WAGES">Daily Wages</SelectItem>
+                <SelectItem value="CONTRACTUAL">Contractual</SelectItem>
               </SelectContent>
             </Select>
           </div>

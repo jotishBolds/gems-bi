@@ -30,6 +30,7 @@ enum TemporarySubType {
   MUSTER_ROLL
   WORK_CHARGE
   DAILY_WAGES
+  CONTRACTUAL
 }
 
 model User {

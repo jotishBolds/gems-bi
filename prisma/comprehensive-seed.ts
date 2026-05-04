@@ -197,6 +197,33 @@ const sikkimeseLocations = {
   ],
 };
 
+// Derive a human-readable natureOfEmployment from the enum values
+function deriveNatureOfEmployment(
+  empType: EmploymentType,
+  subType?: TemporarySubType | null,
+): string {
+  if (empType === EmploymentType.REGULAR_PERMANENT) {
+    return "Regular / Temporary-Permanent";
+  }
+  // TEMPORARY – use sub-type label
+  switch (subType) {
+    case TemporarySubType.ADHOC:
+      return "Adhoc";
+    case TemporarySubType.CONSOLIDATED:
+      return "Consolidated";
+    case TemporarySubType.MUSTER_ROLL:
+      return "Muster Roll (MR)";
+    case TemporarySubType.WORK_CHARGE:
+      return "Work Charge";
+    case TemporarySubType.DAILY_WAGES:
+      return "Daily Wages";
+    case TemporarySubType.CONTRACTUAL:
+      return "Contractual";
+    default:
+      return "Temporary";
+  }
+}
+
 // Generate employee data
 function generateEmployeeData(
   name: string,
@@ -303,7 +330,10 @@ function generateEmployeeData(
       dateOfInitialAppointment.getTime() +
         Math.random() * (Date.now() - dateOfInitialAppointment.getTime()),
     ),
-    natureOfEmployment: Math.random() > 0.2 ? "Permanent" : "Contractual",
+    natureOfEmployment: deriveNatureOfEmployment(
+      employmentType || EmploymentType.REGULAR_PERMANENT,
+      temporarySubType,
+    ),
     employmentType: employmentType || EmploymentType.REGULAR_PERMANENT,
     temporarySubType: temporarySubType || null,
   };
@@ -560,6 +590,7 @@ async function main() {
     { type: EmploymentType.TEMPORARY, subType: TemporarySubType.MUSTER_ROLL },
     { type: EmploymentType.TEMPORARY, subType: TemporarySubType.WORK_CHARGE },
     { type: EmploymentType.TEMPORARY, subType: TemporarySubType.DAILY_WAGES },
+    { type: EmploymentType.TEMPORARY, subType: TemporarySubType.CONTRACTUAL },
   ];
 
   // Create 50 male employees

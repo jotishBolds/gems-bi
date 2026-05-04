@@ -198,7 +198,9 @@ const EmployeeDetails: React.FC<{ employee: Employee }> = ({ employee }) => {
                                 ? "Work Charge"
                                 : employee.temporarySubType === "DAILY_WAGES"
                                   ? "Daily Wages"
-                                  : employee.temporarySubType
+                                  : employee.temporarySubType === "CONTRACTUAL"
+                                    ? "Contractual"
+                                    : employee.temporarySubType
                       }
                     />
                   )}

@@ -61,6 +61,7 @@ export interface Employee {
     | "MUSTER_ROLL"
     | "WORK_CHARGE"
     | "DAILY_WAGES"
+    | "CONTRACTUAL"
     | null;
   createdAt: Date;
   updatedAt: Date;

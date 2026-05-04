@@ -102,6 +102,22 @@ export async function PUT(
     Object.entries(data).filter(([key]) => updatableFields.includes(key)),
   );
 
+  // Auto-derive natureOfEmployment from employmentType / temporarySubType
+  const subTypeLabels: Record<string, string> = {
+    ADHOC: "Adhoc",
+    CONSOLIDATED: "Consolidated",
+    MUSTER_ROLL: "Muster Roll (MR)",
+    WORK_CHARGE: "Work Charge",
+    DAILY_WAGES: "Daily Wages",
+    CONTRACTUAL: "Contractual",
+  };
+  if (filteredData.employmentType === "REGULAR_PERMANENT") {
+    filteredData.natureOfEmployment = "Regular / Temporary-Permanent";
+  } else if (filteredData.employmentType === "TEMPORARY") {
+    filteredData.natureOfEmployment =
+      subTypeLabels[filteredData.temporarySubType] || "Temporary";
+  }
+
   // Ensure date fields are in ISO-8601 format
   const dateFields = [
     "dateOfBirth",
